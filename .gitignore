@@ -1,6 +1,10 @@
 node_modules/
 .npm
 .eslintcache
+.antlr
+
+bin/
+build/
 
 # Logs
 logs

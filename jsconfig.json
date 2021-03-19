@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "es2020",
+    "target": "es2020",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "checkJs": true,
+    "lib": ["es2020"],
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+  ],
+}

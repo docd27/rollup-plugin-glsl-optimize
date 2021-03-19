@@ -1,0 +1,33 @@
+name: Release Binaries
+
+on:
+  push:
+    tags:
+      - "b*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '15.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: NPM install
+        run: npm install
+      - name: Build script
+        run: node build.binaries.mjs
+      - name: Release
+        uses: softprops/action-gh-release@v1
+      #   if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/*
+          name: SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
+          body: SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

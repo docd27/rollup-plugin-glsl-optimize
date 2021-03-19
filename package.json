@@ -1,0 +1,44 @@
+{
+  "name": "rollup-plugin-glsl-optimize",
+  "version": "0.0.1",
+  "description": "Import GLSL source files, optimized with Khronos Group SPIRV-Tools.",
+  "homepage": "https://github.com/docd27/rollup-plugin-glsl-optimize#readme",
+  "keywords": [
+    "rollup",
+    "plugin",
+    "glsl",
+    "webgl",
+    "shaders",
+    "optimize"
+  ],
+  "author": "Docd27",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/docd27/rollup-plugin-glsl-optimize"
+  },
+  "bugs": {
+    "url": "https://github.com/docd27/rollup-plugin-glsl-optimize/issues"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node ./test/index.js"
+  },
+  "dependencies": {
+    "@derhuerst/http-basic": "^8.2.1",
+    "@rollup/pluginutils": "^4.1.0",
+    "adm-zip": "^0.5.4",
+    "env-paths": "^2.2.1",
+    "https-proxy-agent": "^5.0.0",
+    "magic-string": "^0.25.7",
+    "progress": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-google": "^0.14.0",
+    "rollup": "^2.41.5",
+    "tape": "^5.2.2"
+  }
+}
