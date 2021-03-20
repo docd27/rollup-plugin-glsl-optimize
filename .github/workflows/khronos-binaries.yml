@@ -1,4 +1,4 @@
-name: Release Binaries
+name: Khronos Binaries
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       #   if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/*
-          name: SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
-          body: SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
+          name: Khronos binaries ${{ steps.get_version.outputs.VERSION }}
+          body: Khronos SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

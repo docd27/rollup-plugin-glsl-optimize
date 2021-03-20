@@ -1,5 +1,8 @@
 # rollup-plugin-glsl-optimize
+[![NPM Package][npm]][npm-url]
 [![Tool Binaries][tool-binaries]][tool-binaries-url]
+[![Dependencies][dependencies]][dependencies-url]
+[![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
 
 Import GLSL source files. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
 
@@ -100,5 +103,11 @@ Released under the [MIT license](LICENSE).
 
 * [rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)
 
-[tool-binaries]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/release-binaries.yml/badge.svg
-[tool-binaries-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/release-binaries.yml
+[tool-binaries]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml/badge.svg
+[tool-binaries-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml
+[npm]: https://img.shields.io/npm/v/rollup-plugin-glsl-optimize.svg
+[npm-url]: https://www.npmjs.com/package/rollup-plugin-glsl-optimize
+[dependencies]: https://img.shields.io/david/docd27/rollup-plugin-glsl-optimize.svg
+[dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize
+[dev-dependencies]: https://img.shields.io/david/dev/docd27/rollup-plugin-glsl-optimize.svg
+[dev-dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize?type=dev
