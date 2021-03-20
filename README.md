@@ -50,7 +50,7 @@ export default {
 ### Preprocessing and Validation
 Shaders are pre-processed and validated using the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang).
 
-Macros are run at build time with support for C-style ``#include`` directives*:
+Macros are run at build time with support for C-style ``#include`` directives: \*
 
 ```glsl
 #version 300 es
@@ -62,7 +62,7 @@ void main() {
   outColor = CircleDof(UVAndScreenPos, Color, ColorCoc);
 }
 ```
-*Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is not required nor recommended in your final inlined code.*
+*\* Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is not required nor recommended in your final inlined code.*
 
 ### Optimization
 **Requires WebGL2 / GLSL ES >= 300**
@@ -70,9 +70,9 @@ void main() {
 With ``optimize: true`` (default) shaders will also be compiled to SPIR-V (opengl semantics) and optimized for performance using the [Khronos SPIR-V Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) before being cross-compiled back to GLSL.
 
 #### Known Issues / Caveats
-* ``lowp`` precision qualifier - emitted as ``mediump``
+* ``lowp`` precision qualifier - emitted as ``mediump`` \*
 
-  *Since SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
+  *\* Since SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
 
 ## Shader stages
 
