@@ -5,7 +5,7 @@ node_modules/
 
 bin/
 build/
-types-gen/
+typings-autogen/
 
 # Logs
 logs

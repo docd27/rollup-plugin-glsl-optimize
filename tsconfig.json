@@ -1,16 +1,20 @@
 {
-  "include": ["**/*.js"],
+  "include": ["src/index.js"],
   "compilerOptions": {
+    "outDir": "typings-autogen",
     "module": "ESNext",
-    "target": "ESNext",
+    "target": "ES2020",
     "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "lib": ["ESNext"],
     "checkJs": true,
     "allowJs": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "types-gen"
+    "stripInternal": true,
   },
   "exclude": [
     "node_modules",

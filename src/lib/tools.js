@@ -1,17 +1,18 @@
 import {platform, arch} from 'os';
-import {fileURLToPath} from 'url';
 import {spawn} from 'child_process';
 import * as path from 'path';
 import * as fsSync from 'fs';
 import {bufferAndErrLines, bufferAndOutLines, bufferLines, parseLines, writeLines} from './lines.js';
 import {default as envPaths} from 'env-paths';
 
-// @ts-ignore
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const binFolder = path.resolve(__dirname, '../bin');
+import {settings} from '../../settings.js';
+
+const binFolder = settings.BIN_PATH;
+const rootFolder = settings.PROJECT_ROOT;
 
 let _pkg;
 /**
+ * @internal
  * Workaround since node won't ES6 import json
  * @return {any} Contents of package.json
  */
@@ -27,12 +28,12 @@ export const getPkg = () => {
 };
 
 /**
+ * @internal
  * @param {string} file relative to package root
  * @return {any}
  */
 export const loadJSON = (file) => JSON.parse(fsSync.readFileSync(
-    // @ts-ignore
-    path.resolve(__dirname, '../', file), {encoding: 'utf8'}));
+    path.resolve(rootFolder, file), {encoding: 'utf8'}));
 
 /**
  * @typedef {'Validator'|'Optimizer'|'Cross'} GLSLToolVals
@@ -69,6 +70,7 @@ const ToolConfig = {
  * @property {string[]} fileList
  */
 /**
+ * @internal
  * @return {BinarySource?}
  */
 export function configurePlatformBinaries() {
@@ -116,9 +118,11 @@ function errorMissingTools(kinds) {
 /** @param {GLSLSingleToolConfig} config */
 const toolInfo = (config) => `${config.name} : configure with the environment variable ${config.envKey} (or the option ${config.optionKey})\n${config.url}\n`;
 
+/** @internal */
 export const allToolInfo = () => Object.values(ToolConfig).map(toolInfo).join('\n');
 
 /**
+ * @internal
  * @param {Partial<import('./glslProcess').GLSLToolOptions>} options
  * @param {GLSLToolVals[]} [required]
  */
@@ -155,6 +159,7 @@ function getToolPath(kind) {
 }
 
 /**
+ * @internal
  * @param {GLSLToolVals} kind
  * @param {string} workingDir
  * @param {string[]} args
@@ -168,6 +173,7 @@ export function launchTool(kind, workingDir, args) {
  * @typedef {{code: number, signal: NodeJS.Signals}} ToolExitStatus
  */
 /**
+ * @internal
  * @param {string} path
  * @param {string} workingDir
  * @param {string[]} args
@@ -186,10 +192,8 @@ export function launchToolPath(path, workingDir, args) {
     throw new Error(`${path}: failed to launch${err?.message?` : ${err.message}`:''}`);
   });
   /** @type {Promise<ToolExitStatus>} */
-  // @ts-ignore
   const exitPromise = new Promise((resolve, reject) => {
     toolProcess.on('exit', (code, signal) => {
-      // @ts-ignore
       resolve({code, signal});
     });
   });
@@ -197,6 +201,7 @@ export function launchToolPath(path, workingDir, args) {
 }
 
 /**
+ * @internal
  * @param {{toolProcess: import('child_process').ChildProcess, exitPromise: Promise<ToolExitStatus>}} param0
  * @param {string} [input]
  * @param {boolean} [echo]
@@ -222,6 +227,7 @@ export async function runToolBuffered({toolProcess, exitPromise}, input = undefi
 }
 
 /**
+ * @internal
  * @param {{toolProcess: import('child_process').ChildProcess, exitPromise: Promise<ToolExitStatus>}} param0
  * @param {string} [input]
  */
@@ -254,9 +260,11 @@ const argEscapeWindows = (pattern) => {
 const argQuoteWindows = (val) => `"${argEscapeWindows(val)}"`.split(' ');
 const argVerbatim = (val) => [val];
 
+/** @internal */
 export const argQuote = platform() === 'win32' ? argQuoteWindows : argVerbatim;
 
 let _cachePath;
+/** @internal */
 export const getCachePath = () => {
   if (!_cachePath) {
     _cachePath = envPaths(getPkg().name).cache;

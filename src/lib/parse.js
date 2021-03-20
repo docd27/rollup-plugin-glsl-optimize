@@ -1,5 +1,6 @@
 
 /**
+ * @internal
  * Very basic GLSL parsing handling #version and #extension preprocessor directives
  * @param {string} input
  */
@@ -8,6 +9,7 @@ export function* simpleParse(input) {
 }
 
 /**
+ * @internal
  * @param {string} input
  * @return {Generator<[string,string],void,void>}
  */
@@ -31,8 +33,10 @@ function* iterateStringLookahead(input) {
  * @param {Number} n
  */
 const _T = (n) => /** @type {TokenID} */(n);
+/** @internal */
 export const TOK = Object.freeze({EOL: _T(1), EOF: _T(2), Line: _T(3), Comment: _T(4),
   Version: _T(5), Extension: _T(6), LineNo: _T(7), Directive: _T(8)});
+/** @internal */
 export const TOKENNAMES = Object.freeze({1: 'EOL', 2: 'EOF', 3: 'Line', 4: 'Comment',
   5: 'Version', 6: 'Extension', 7: 'LineNo', 8: 'Directive'});
 
@@ -281,6 +285,7 @@ function* parser(input) {
 const warnParse = (message, token) => console.error(formatParseError(message, token));
 
 /**
+ * @internal
  * @param {string} message
  * @param {LexerToken} token
  */
@@ -320,6 +325,7 @@ const printToken = (t) => {
       restKV.length ? ` | ${restKV.map(([k, v]) => `${k} : '${v}'`).join(' | ')}`: ''}`;
 };
 
+/** @internal */
 export function parseDump(input) {
   for (const token of simpleParse(input)) {
     console.log(printToken(token));

@@ -4,6 +4,7 @@
   Copyright (c) Vincent Wochnik <v.wochnik@gmail.com>
 */
 
+/** @internal */
 export function compressShader(code) {
   let needNewline = false;
   return code.replace(/\\(?:\r\n|\n\r|\n|\r)|\/\*.*?\*\/|\/\/(?:\\(?:\r\n|\n\r|\n|\r)|[^\n\r])*/g, '')

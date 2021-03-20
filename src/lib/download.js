@@ -1,5 +1,4 @@
 import * as fsSync from 'fs';
-// @ts-ignore
 import {default as createHttpsProxyAgent} from 'https-proxy-agent';
 import {default as TFileCache} from '@derhuerst/http-basic/lib/FileCache.js';
 import * as querystring from 'querystring';
@@ -34,8 +33,7 @@ const normalizeS3Url = (url) => {
   const query = Array.from(url.searchParams.entries())
       .filter(([key]) => key.slice(0, 6).toLowerCase() !== 'x-amz-')
       .reduce((query, [key, val]) => ({...query, [key]: val}), {});
-  // @ts-ignore
-  url.search = querystring.encode(query);
+  url.search = querystring.stringify(query);
   return url.href;
 };
 
@@ -60,6 +58,7 @@ function initHTTP() {
   };
 }
 
+/** @internal */
 export const downloadProgress = (taskName) => {
   let progressBar = null;
   return (deltaBytes, totalBytes) => {
@@ -76,6 +75,7 @@ export const downloadProgress = (taskName) => {
   };
 };
 
+/** @internal */
 export async function downloadFile(url, destinationPath, progressCallback = undefined) {
   if (!httpHelpers) initHTTP();
   let totalBytes = 0;
@@ -115,7 +115,9 @@ export async function downloadFile(url, destinationPath, progressCallback = unde
   });
 }
 
-/** @param {string[]} paths */
+/**
+ * @internal
+ * @param {string[]} paths */
 export function fixPerms(paths) {
   for (const path of paths) {
     if (path && fsSync.existsSync(path)) {
@@ -124,7 +126,9 @@ export function fixPerms(paths) {
   }
 }
 
-/** @param {string[]} paths */
+/**
+ * @internal
+ * @param {string[]} paths */
 export const allFilesExist = (paths) => paths.every((path) => !path || fsSync.existsSync(path));
 
 /** @param {string} path */
@@ -136,6 +140,7 @@ export function checkMakeFolder(path) {
 }
 
 /**
+ * @internal
  * Extracts zip then deletes it
  * @param {string} zipPath
  * @param {string} destFolder
@@ -156,6 +161,7 @@ export function unzipAndDelete(zipPath, destFolder) {
 
 
 /**
+ * @internal
  * @param {string} url
  * @param {string} dest
  * @param {string} workingDir
@@ -179,6 +185,7 @@ export async function curlDownloadFile(url, dest, workingDir) {
 }
 
 /**
+ * @internal
  * @param {string} archiveFile
  * @param {string[]} fileList
  * @param {string} workingDir
@@ -200,6 +207,7 @@ export async function untargzFile(archiveFile, fileList, workingDir) {
 }
 
 /**
+ * @internal
  * @param {string} archiveFile
  * @param {string[]} fileList
  * @param {string} workingDir
@@ -219,6 +227,7 @@ export async function unzipFile(archiveFile, fileList, workingDir) {
 }
 
 /**
+ * @internal
  * @param {string} archiveFile
  * @param {string} workingDir
  */
@@ -235,5 +244,5 @@ export async function zipAll(archiveFile, workingDir) {
   }
 }
 
-// @ts-ignore
+/** @internal */
 export const rmDir = (path) => fsSync.existsSync(path) && fsSync.rmdirSync(path, {recursive: true});

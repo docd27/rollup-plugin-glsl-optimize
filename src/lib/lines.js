@@ -4,6 +4,7 @@ import * as stream from 'stream';
 
 const streamFinished = promisify(stream.finished);
 /**
+ * @internal
  * @param {stream.Writable} outputStream
  */
 export function chunkWriterAsync(outputStream) {
@@ -26,6 +27,7 @@ export function chunkWriterAsync(outputStream) {
 }
 
 /**
+ * @internal
  * @param {stream.Writable} stream
  * @param {string} lines
  */
@@ -38,6 +40,7 @@ export async function writeLines(stream, lines) {
 }
 
 /**
+ * @internal
  * @param {stream.Readable} stream
  */
 export async function* parseLines(stream) {
@@ -72,6 +75,7 @@ export async function* parseLines(stream) {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function debugLogLines(lines, prefix = '') {
@@ -83,6 +87,7 @@ export async function debugLogLines(lines, prefix = '') {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function logOutLines(lines, prefix = '') {
@@ -92,6 +97,7 @@ export async function logOutLines(lines, prefix = '') {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function logErrLines(lines, prefix = '') {
@@ -101,6 +107,7 @@ export async function logErrLines(lines, prefix = '') {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function bufferLines(lines) {
@@ -112,6 +119,7 @@ export async function bufferLines(lines) {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function bufferAndOutLines(lines, prefix = '') {
@@ -124,6 +132,7 @@ export async function bufferAndOutLines(lines, prefix = '') {
 }
 
 /**
+ * @internal
  * @param {AsyncGenerator<string, void, void>} lines
  */
 export async function bufferAndErrLines(lines, prefix = '') {

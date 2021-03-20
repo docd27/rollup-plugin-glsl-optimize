@@ -1,6 +1,6 @@
-import {configurePlatformBinaries, getPkg, allToolInfo} from './lib/tools.js';
+import {configurePlatformBinaries, getPkg, allToolInfo} from './src/lib/tools.js';
 import {fixPerms, allFilesExist, downloadFile, downloadProgress,
-  checkMakeFolder, unzipAndDelete} from './lib/download.js';
+  checkMakeFolder, unzipAndDelete} from './src/lib/download.js';
 import * as path from 'path';
 
 const fatalError = (err) => {

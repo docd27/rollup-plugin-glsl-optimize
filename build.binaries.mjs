@@ -1,7 +1,7 @@
 
-import {loadJSON} from './lib/tools.js';
+import {loadJSON} from './src/lib/tools.js';
 import {fixPerms, allFilesExist, zipAll, rmDir,
-  checkMakeFolder, curlDownloadFile, untargzFile, unzipFile} from './lib/download.js';
+  checkMakeFolder, curlDownloadFile, untargzFile, unzipFile} from './src/lib/download.js';
 import * as path from 'path';
 import {fileURLToPath} from 'url';
 import * as fsSync from 'fs';

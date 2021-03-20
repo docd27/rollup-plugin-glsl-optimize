@@ -4,7 +4,7 @@ import {formatParseError, simpleParse, TOK, TOKENNAMES} from './parse.js';
 const GLSL_INCLUDE_EXT = 'GL_GOOGLE_include_directive';
 const GLSL_LINE_EXT = 'GL_GOOGLE_cpp_style_line_directive';
 /**
- *
+ * @internal
  * @param {string} code
  * @param {string} filePath
  * @param {(version: string) => string} [versionReplacer]
@@ -94,6 +94,7 @@ export function insertExtensionPreamble(code, filePath, versionReplacer = (v) =>
 
 
 /**
+ * @internal
  * @param {string} code
  * @param {boolean} preserve
  * @param {boolean} required

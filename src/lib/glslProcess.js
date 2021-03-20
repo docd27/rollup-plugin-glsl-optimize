@@ -35,6 +35,7 @@ import { compressShader } from './minify.js';
  */
 
 /**
+ * @internal
  * @param {string} name
  * @param {string} workingDir
  * @param {string} stageName
@@ -63,6 +64,7 @@ async function glslRunValidator(name, workingDir, stageName, input, params, extr
 }
 
 /**
+ * @internal
  * @param {string} name
  * @param {string} workingDir
  * @param {string} inputFile
@@ -95,6 +97,7 @@ async function glslRunOptimizer(name, workingDir, inputFile, outputFile, input,
 }
 
 /**
+ * @internal
  * @param {string} name
  * @param {string} workingDir
  * @param {string} stageName
@@ -124,6 +127,7 @@ async function glslRunCross(name, workingDir, stageName, inputFile, input, emitL
 }
 
 /**
+ * @internal
  * @param {string} id File path
  * @param {string} source Source code
  * @param {GLSLStageName} stageName
