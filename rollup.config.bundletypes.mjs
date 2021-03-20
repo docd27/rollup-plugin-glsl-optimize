@@ -1,6 +1,7 @@
 import internalDel from 'del';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
+import * as fsSync from 'fs';
 
 const IN_DIR = 'typings-autogen';
 const OUTPUT_FILE = 'dist/index.d.ts';
@@ -28,6 +29,16 @@ function earlyDel(targets = [], deleteOptions = {}) {
   };
 }
 
+function appendDts (filePath) {
+  const fileContent = fsSync.readFileSync(filePath, {encoding: 'utf8'});
+  return {
+    name: 'append-dts',
+    renderChunk (code) {
+      return `${code}\n${fileContent}`;
+    }
+  }
+}
+
 export default [{
   input: `${IN_DIR}/src/index.d.ts`,
   output: {
@@ -36,7 +47,8 @@ export default [{
   },
   plugins: [
     earlyDel([OUTPUT_FILE]),
-    dts(),
+    dts({compilerOptions: {}}),
+    // appendDts('src/resources.d.ts'),
     del({hook: 'buildEnd', targets: [IN_DIR]}),
   ],
   external: [ 'child_process' ],

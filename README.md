@@ -17,6 +17,9 @@ console.log(frag);
 ```sh
 npm i rollup-plugin-glsl-optimize -D
 ```
+
+Bundled as an ECMAScript Module (ESM) and requires Node >= 14.x - original sources are in ``src/index.js`` for other toolchains.
+
 ### Khronos tool binaries
 This plugin requires binaries from the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang), [Khronos SPIRV-Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) and [Khronos SPIRV Cross compiler](https://github.com/KhronosGroup/SPIRV-Cross).
 
