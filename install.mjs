@@ -46,8 +46,6 @@ const fatalError = (err) => {
 
     const unzippedFiles = unzipAndDelete(downloadArchivePath, binSource.folderPath);
 
-    console.log(unzippedFiles.join('\n'));
-
     if (allFilesExist(binSource.fileList)) {
       fixPerms(binSource.fileList);
     } else {

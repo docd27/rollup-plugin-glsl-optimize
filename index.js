@@ -32,8 +32,11 @@ function generateCode(source) {
  * @typedef {Array<string | RegExp> | string | RegExp | null} PathFilter
  * @typedef {Object} GLSLPluginGlobalOptions
  * @property {PathFilter} [include]
+ *   File extensions within rollup to include.
  * @property {PathFilter} [exclude]
+ *   File extensions within rollup to exclude.
  * @property {boolean} [sourceMap]
+ *   Emit source maps
  * @typedef {GLSLPluginGlobalOptions & Partial<import('./lib/glslProcess').GLSLToolOptions>} GLSLPluginOptions
  */
 /**

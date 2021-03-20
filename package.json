@@ -1,7 +1,7 @@
 {
   "name": "rollup-plugin-glsl-optimize",
   "version": "0.0.1",
-  "description": "Import GLSL source files, optimized with Khronos Group SPIRV-Tools.",
+  "description": "Import GLSL source files. Pre-processed, validated and optimized with Khronos Group SPIRV-Tools.",
   "homepage": "https://github.com/docd27/rollup-plugin-glsl-optimize#readme",
   "keywords": [
     "rollup",
@@ -25,11 +25,12 @@
   "scripts": {
     "install": "node install.mjs",
     "lint": "eslint .",
+    "gentypes": "npx typescript",
     "test": "node ./test/index.js"
   },
   "installBinaries": {
     "url": "https://github.com/docd27/rollup-plugin-glsl-optimize/releases/download/",
-    "tag": "b0.0.1"
+    "tag": "b0.0.2"
   },
   "dependencies": {
     "@derhuerst/http-basic": "^8.2.1",

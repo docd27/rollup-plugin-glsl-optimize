@@ -1,11 +1,16 @@
 {
+  "include": ["**/*.js"],
   "compilerOptions": {
     "module": "ESNext",
     "target": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "checkJs": true,
     "lib": ["ESNext"],
+    "checkJs": true,
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types-gen"
   },
   "exclude": [
     "node_modules",
