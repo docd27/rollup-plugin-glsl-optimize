@@ -30,7 +30,9 @@
     "types": "npm run gentypes && npx rollup -c rollup.config.bundletypes.mjs",
     "bundle": "npx rollup -c rollup.config.package.mjs",
     "build": "rimraf ./dist && npm run types && npm run bundle",
-    "test": "node ./test/index.js"
+    "test": "node ./test/index.js",
+    "cleanrelease": "rimraf bin && rimraf build && rimraf typings-autogen",
+    "clean": "rimraf bin && rimraf build && rimraf typings-autogen && rimraf dist"
   },
   "installBinaries": {
     "url": "https://github.com/docd27/rollup-plugin-glsl-optimize/releases/download/",

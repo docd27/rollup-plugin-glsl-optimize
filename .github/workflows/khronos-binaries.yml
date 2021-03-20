@@ -6,7 +6,7 @@ on:
       - "b*"
 
 jobs:
-  release:
+  release-binaries:
     runs-on: ubuntu-latest
     steps:
       - name: Get the version
