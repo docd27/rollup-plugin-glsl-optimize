@@ -239,7 +239,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
     outputGLSL = await glslRunCross('Build spirv to GLSL', targetDir, stageName,
       options.optimizerDebugSkipOptimizer ? outputFileAbs : optimizedFileAbs, undefined, options.emitLineDirectives, [
         '--es', // WebGL is always ES
-        `--version ${targetGlslVersion}`,
+        '--version', `${targetGlslVersion}`,
         // '--disable-storage-image-qualifier-deduction',
         // '--glsl-es-default-float-precision highp',
         // '--glsl-es-default-int-precision highp',
