@@ -1,6 +1,7 @@
 # rollup-plugin-glsl-optimize
 [![NPM Package][npm]][npm-url]
 [![Node.js CI][ci]][ci-url]
+[![NPM Publish][npm-publish]][npm-publish]
 [![Tool Binaries][tool-binaries]][tool-binaries-url]
 [![Dependencies][dependencies]][dependencies-url]
 [![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
@@ -108,6 +109,8 @@ Released under the [MIT license](LICENSE).
 [ci-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml
 [tool-binaries]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml/badge.svg
 [tool-binaries-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml
+[npm-publish]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/npm-publish.yml/badge.svg
+[npm-publish-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/npm-publish.yml
 [npm]: https://img.shields.io/npm/v/rollup-plugin-glsl-optimize.svg
 [npm-url]: https://www.npmjs.com/package/rollup-plugin-glsl-optimize
 [dependencies]: https://img.shields.io/david/docd27/rollup-plugin-glsl-optimize.svg
