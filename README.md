@@ -1,7 +1,7 @@
 # rollup-plugin-glsl-optimize
 [![NPM Package][npm]][npm-url]
 [![Node.js CI][ci]][ci-url]
-[![NPM Publish][npm-publish]][npm-publish]
+[![NPM Publish][npm-publish]][npm-publish-url]
 [![Tool Binaries][tool-binaries]][tool-binaries-url]
 [![Dependencies][dependencies]][dependencies-url]
 [![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
