@@ -64,6 +64,11 @@ void main() {
 
 With ``optimize: true`` (default) shaders will also be compiled to SPIR-V (opengl semantics) and optimized for performance using the [Khronos SPIR-V Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) before being cross-compiled back to GLSL.
 
+#### Known Issues / Caveats
+* ``lowp`` precision qualifier - emitted as ``mediump``
+
+  *Because SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However desktop hardware completely eliminated 8bit types many years ago and implement ``mediump`` and ``lowp`` equivalently, similarly for current mobile platforms. Even for Samplers on 8-bit textures due to texture filtering.*
+
 ## Shader stages
 
 The following shader stages are supported by the Khronos tools and recognized by file extension:
