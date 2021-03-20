@@ -11,7 +11,7 @@
     "shaders",
     "optimize"
   ],
-  "author": "Docd27",
+  "author": "docd27",
   "repository": {
     "type": "git",
     "url": "https://github.com/docd27/rollup-plugin-glsl-optimize"
