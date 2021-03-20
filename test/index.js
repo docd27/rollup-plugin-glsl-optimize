@@ -1,7 +1,7 @@
 import {rollup} from 'rollup';
 import {default as test} from 'tape';
 
-import {default as glslOptimize} from '../index.js';
+import {default as glslOptimize} from '../dist/index.js';
 
 
 process.chdir('test');
