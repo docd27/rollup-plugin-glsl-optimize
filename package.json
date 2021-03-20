@@ -36,7 +36,7 @@
   },
   "installBinaries": {
     "url": "https://github.com/docd27/rollup-plugin-glsl-optimize/releases/download/",
-    "tag": "b0.0.3"
+    "tag": "b0.0.4"
   },
   "dependencies": {
     "@derhuerst/http-basic": "^8.2.1",
