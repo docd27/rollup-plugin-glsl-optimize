@@ -31,15 +31,17 @@ const BANNER_MSG = `/*
 * For easier debugging you can include ./src/index.js directly instead
 */`;
 
+const OUTPUT_FILE = 'dist/index.js';
+
 export default [{
   input: `src/index.js`,
   output: {
-    file: `index.js`,
+    file: OUTPUT_FILE,
     format: 'esm',
     banner: `/* eslint-disable */\n// @ts-nocheck\n\n${BANNER_MSG}\n\n`,
   },
   plugins: [
-    earlyDel(['index.js']),
+    earlyDel([OUTPUT_FILE]),
     resolve(),
     commonjs(),
     cleanup({

@@ -3,7 +3,7 @@ import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
 
 const IN_DIR = 'typings-autogen';
-const OUT_DIR = 'typings';
+const OUTPUT_FILE = 'dist/index.d.ts';
 
 let earlyDelDone = false;
 // Runs sequentially before buildStart hooks:
@@ -31,11 +31,11 @@ function earlyDel(targets = [], deleteOptions = {}) {
 export default [{
   input: `${IN_DIR}/src/index.d.ts`,
   output: {
-    file: `${OUT_DIR}/index.d.ts`,
+    file: OUTPUT_FILE,
     format: 'es',
   },
   plugins: [
-    earlyDel([OUT_DIR]),
+    earlyDel([OUTPUT_FILE]),
     dts(),
     del({hook: 'buildEnd', targets: [IN_DIR]}),
   ],
