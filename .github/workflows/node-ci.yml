@@ -22,5 +22,7 @@ jobs:
         registry-url: 'https://registry.npmjs.org'
     - name: NPM install
       run: npm install
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Build bundle
+      run: npm run build --if-present
+    - name: Tests
+      run: npm test

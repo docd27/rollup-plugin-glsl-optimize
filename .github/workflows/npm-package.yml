@@ -1,0 +1,41 @@
+name: NPM Package
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Read version from tag
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/v}
+    - uses: actions/checkout@v2
+    # Setup .npmrc file to publish to npm
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '15.x'
+        registry-url: 'https://registry.npmjs.org'
+    - name: Extract package.json version
+      id: extract_version
+      uses: Saionaro/extract-package-version@v1.0.6
+    - name: Tag version
+      run: echo ${{ steps.get_version.outputs.VERSION }}
+    - name: Package.json version
+      run: echo ${{ steps.extract_version.outputs.version }}
+    - name: Package.json version matches Tag
+      if: steps.get_version.outputs.VERSION != steps.extract_version.outputs.version
+      run: exit 1
+    - name: NPM install
+      run: npm install
+    - name: Build bundle
+      run: npm run build
+    - name: Tests
+      run: npm test
+    - name: Would publish
+      run: echo Publish
+    # - run: npm publish
+    #   env:
+    #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
