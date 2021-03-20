@@ -49,6 +49,7 @@ export default [{
     }),
   ],
   external: [
+    '../../settings.js',
     '@derhuerst/http-basic',
     '@derhuerst/http-basic/lib/FileCache.js',
     '@rollup/pluginutils',
