@@ -6,7 +6,11 @@
 [![Dependencies][dependencies]][dependencies-url]
 [![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
 
-Import GLSL source files. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
+Import GLSL source files as strings. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
+
+Primary use-case is processing WebGL2 / GLSL ES 300 shaders.
+
+*Plugin supports node >= 14.x*
 
 ```js
 import frag from './shaders/myShader.frag';
@@ -18,17 +22,15 @@ console.log(frag);
 npm i rollup-plugin-glsl-optimize -D
 ```
 
-Bundled as an ECMAScript Module (ESM) and requires Node >= 14.x - original sources are in ``src/index.js`` for other toolchains.
-
 ### Khronos tool binaries
-This plugin requires binaries from the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang), [Khronos SPIRV-Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) and [Khronos SPIRV Cross compiler](https://github.com/KhronosGroup/SPIRV-Cross).
+This plugin uses binaries from the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang), [Khronos SPIRV-Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) and [Khronos SPIRV Cross compiler](https://github.com/KhronosGroup/SPIRV-Cross).
 
-Upstream builds are automatically installed for:
+They are automatically installed for:
 * Windows 64bit (MSVC 2017)
 * Ubuntu Trusty / Debian amd64 (clang)
 * MacOS x86_64 (clang)
 
-Otherwise tool paths are provided / overridden with the ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` environment variables.
+Paths can also be manually provided / overridden with the ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` environment variables.
 
 ## Usage
 ```js
@@ -46,9 +48,9 @@ export default {
 ## Features
 
 ### Preprocessing and Validation
-Shaders are pre-processed and validated using the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang) which helps identify syntactic and semantic errors.
+Shaders are pre-processed and validated using the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang).
 
-Macros like ``#define`` are now run at build time. There's also support for C-style ``#include`` directives*:
+Macros are run at build time with support for C-style ``#include`` directives*:
 
 ```glsl
 #version 300 es
@@ -60,7 +62,7 @@ void main() {
   outColor = CircleDof(UVAndScreenPos, Color, ColorCoc);
 }
 ```
-*Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is neither required nor recommended since most browsers/drivers will throw an error.*
+*Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is not required nor recommended in your final inlined code.*
 
 ### Optimization
 **Requires WebGL2 / GLSL ES >= 300**
@@ -70,7 +72,7 @@ With ``optimize: true`` (default) shaders will also be compiled to SPIR-V (openg
 #### Known Issues / Caveats
 * ``lowp`` precision qualifier - emitted as ``mediump``
 
-  *Because SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However desktop hardware completely eliminated 8bit types many years ago and implement ``mediump`` and ``lowp`` equivalently, similarly for current mobile platforms. Even for Samplers on 8-bit textures due to texture filtering.*
+  *Since SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
 
 ## Shader stages
 
@@ -85,7 +87,7 @@ The following shader stages are supported by the Khronos tools and recognized by
 | Tess Control* | ``.tesc, .tesc.glsl``                |
 | Tess Eval*    | ``.tese, .tese.glsl``                |
 
-*\* Unsupported in WebGL and therefore untested*
+*\* Unsupported in WebGL2*
 
 ## Options
 - `include` : `PathFilter` (default table above) File extensions within rollup to include. Though this option can be reconfigured, shader stage detection still operates based on the table above.
@@ -107,7 +109,7 @@ The following shader stages are supported by the Khronos tools and recognized by
 
 Released under the [MIT license](LICENSE).
 
-*Khronos tool binaries (built and made available by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0 (consult the corresponding LICENSE files in the ``bin`` folder).*
+*Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files in the ``bin`` folder.*
 
 ## See also
 
