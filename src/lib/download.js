@@ -159,7 +159,7 @@ export function unzipAndDelete(zipPath, destFolder) {
   return entries;
 }
 
-
+/* c8 ignore start */
 /**
  * @internal
  * @param {string} url
@@ -221,7 +221,7 @@ export async function zipAll(archiveFile, workingDir) {
     '*',
   ]);
 }
-
+/* c8 ignore stop */
 
 
 /** @internal */

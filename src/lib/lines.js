@@ -84,6 +84,7 @@ export async function bufferLines(lines) {
   return output;
 }
 
+/* c8 ignore start */
 /**
  * @internal
  * @param {AsyncGenerator<string, void, void>} lines
@@ -109,3 +110,4 @@ export async function bufferAndErrLines(lines, prefix = '') {
   }
   return output;
 }
+/* c8 ignore stop */

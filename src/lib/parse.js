@@ -284,6 +284,7 @@ function* parser(input) {
 
 const warnParse = (message, token) => console.error(formatParseError(message, token));
 
+/* c8 ignore start */
 /**
  * @internal
  * @param {string} message
@@ -331,3 +332,5 @@ export function parseDump(input) {
     console.log(printToken(token));
   }
 }
+
+/* c8 ignore stop */
