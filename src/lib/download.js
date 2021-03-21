@@ -220,7 +220,7 @@ export async function unzipFile(archiveFile, fileList, workingDir) {
     ...(fileList.map((path) => argQuote(path)).flat()),
   ]));
   if (curlResult.error) {
-    const errMsg = `Extract failed: tar ${curlResult.exitMessage}`;
+    const errMsg = `Extract failed: unzip ${curlResult.exitMessage}`;
     console.error(errMsg);
     throw new Error(errMsg);
   }
