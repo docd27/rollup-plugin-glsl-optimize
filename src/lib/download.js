@@ -7,7 +7,7 @@ import {default as ProgressBar} from 'progress';
 import {default as AdmZip} from 'adm-zip';
 
 import {URL} from 'url';
-import {argQuote, getCachePath, launchToolPath, runTool} from './tools.js';
+import {argQuote, getCachePath, runTool} from './tools.js';
 
 /**
  * @typedef {import('@derhuerst/http-basic/lib/FileCache.js').default} FileCacheInst
@@ -167,21 +167,14 @@ export function unzipAndDelete(zipPath, destFolder) {
  * @param {string} workingDir
  */
 export async function curlDownloadFile(url, dest, workingDir) {
-  const curlResult = await runTool(launchToolPath('curl', workingDir, [
+  return runTool('curl', workingDir, 'Download', [
     '--progress-bar', // Simple progress bar
     '--location', // Follow redirects
     '--compressed', // gzip compression of text resources
     '--user-agent', ...argQuote('Build script'),
     '--output', ...argQuote(dest),
     ...argQuote(url),
-  ]));
-  if (curlResult.error) {
-    // printDiagnostic(curlResult.outLines);
-    // printDiagnostic(curlResult.errLines);
-    const errMsg = `Download failed: curl ${curlResult.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
+  ]);
 }
 
 /**
@@ -191,19 +184,14 @@ export async function curlDownloadFile(url, dest, workingDir) {
  * @param {string} workingDir
  */
 export async function untargzFile(archiveFile, fileList, workingDir) {
-  const curlResult = await runTool(launchToolPath('tar', workingDir, [
+  return runTool('tar', workingDir, 'Extract', [
     '-x', // extract
     '-z', // gzip
     '--skip-old-files', // never overwrite (skip)
     `--transform=s,.*/,,`, // Strip directory structure
     '-f', ...argQuote(archiveFile),
     ...(fileList.map((path) => argQuote(path)).flat()),
-  ]));
-  if (curlResult.error) {
-    const errMsg = `Extract failed: tar ${curlResult.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
+  ]);
 }
 
 /**
@@ -213,17 +201,12 @@ export async function untargzFile(archiveFile, fileList, workingDir) {
  * @param {string} workingDir
  */
 export async function unzipFile(archiveFile, fileList, workingDir) {
-  const curlResult = await runTool(launchToolPath('unzip', workingDir, [
+  return runTool('unzip', workingDir, 'Extract', [
     '-j', // strip directory structure
     '-n', // never overwrite (skip)
     ...argQuote(archiveFile),
     ...(fileList.map((path) => argQuote(path)).flat()),
-  ]));
-  if (curlResult.error) {
-    const errMsg = `Extract failed: unzip ${curlResult.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
+  ]);
 }
 
 /**
@@ -232,17 +215,14 @@ export async function unzipFile(archiveFile, fileList, workingDir) {
  * @param {string} workingDir
  */
 export async function zipAll(archiveFile, workingDir) {
-  const curlResult = await runTool(launchToolPath('7z', workingDir, [
+  return runTool('7z', workingDir, 'Zip', [
     'a',
     ...argQuote(archiveFile),
     '*',
-  ]));
-  if (curlResult.error) {
-    const errMsg = `Zip failed: 7z ${curlResult.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
+  ]);
 }
+
+
 
 /** @internal */
 export const rmDir = (path) => fsSync.existsSync(path) && fsSync.rmdirSync(path, {recursive: true});

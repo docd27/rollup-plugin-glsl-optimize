@@ -1,8 +1,7 @@
-import {TextDecoder, promisify} from 'util';
+import {TextDecoder} from 'util';
 import {once} from 'events';
 import * as stream from 'stream';
 
-const streamFinished = promisify(stream.finished);
 /**
  * @internal
  * @param {stream.Writable} outputStream
@@ -32,7 +31,6 @@ export function chunkWriterAsync(outputStream) {
  * @param {string} lines
  */
 export async function writeLines(stream, lines) {
-
   const chunkWriter = chunkWriterAsync(stream);
   // TODO: write large files in multiple chunks
   await chunkWriter.write(lines);
@@ -71,38 +69,6 @@ export async function* parseLines(stream) {
   if (outputBuffer.length > 0) { // Trailing string
     const nextChunkString = utf8Decoder.decode(outputBuffer, {stream: false});
     yield nextChunkString;
-  }
-}
-
-/**
- * @internal
- * @param {AsyncGenerator<string, void, void>} lines
- */
-export async function debugLogLines(lines, prefix = '') {
-  let lineCount = 0;
-  for await (const line of lines) {
-    lineCount++;
-    console.log(`${prefix}${line}`);
-  }
-}
-
-/**
- * @internal
- * @param {AsyncGenerator<string, void, void>} lines
- */
-export async function logOutLines(lines, prefix = '') {
-  for await (const line of lines) {
-    console.log(`${prefix}${line}`);
-  }
-}
-
-/**
- * @internal
- * @param {AsyncGenerator<string, void, void>} lines
- */
-export async function logErrLines(lines, prefix = '') {
-  for await (const line of lines) {
-    console.error(`${prefix}${line}`);
   }
 }
 

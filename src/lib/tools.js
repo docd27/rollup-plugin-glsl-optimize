@@ -64,45 +64,65 @@ const ToolConfig = {
   },
 };
 /**
+ * @typedef {'win64'|'ubuntu64'|'macos64'} PlatformTag
+ * @typedef {{[P in GLSLToolVals]: string}} PerPlatformDistPaths
+ * @typedef {{[P in PlatformTag]: PerPlatformDistPaths}} PlatformDistPaths
+ * @type {PlatformDistPaths}
+ */
+const ToolDistPaths = {
+  win64: {
+    Validator: `glslangValidator.exe`,
+    Optimizer: `spirv-opt.exe`,
+    Cross: `spirv-cross.exe`,
+  },
+  ubuntu64: {
+    Validator: `glslangValidator`,
+    Optimizer: `spirv-opt`,
+    Cross: `spirv-cross`,
+  },
+  macos64: {
+    Validator: `glslangValidator`,
+    Optimizer: `spirv-opt`,
+    Cross: `spirv-cross`,
+  },
+}
+/**
  * @typedef {Object} BinarySource
  * @property {string} folderPath
  * @property {string} tag
  * @property {string[]} fileList
  */
+
+/** @type {PlatformTag} */
+let _platTag = undefined;
+let _platConfigured = false;
+
 /**
  * @internal
  * @return {BinarySource?}
  */
 export function configurePlatformBinaries() {
-  let tag = undefined;
-  if (arch() === 'x64') {
-    switch (platform()) {
-      case 'win32':
-        tag = 'win64';
-        ToolConfig.Validator.distPath = `win64${path.sep}glslangValidator.exe`;
-        ToolConfig.Optimizer.distPath = `win64${path.sep}spirv-opt.exe`;
-        ToolConfig.Cross.distPath = `win64${path.sep}spirv-cross.exe`;
-        break;
-      case 'linux': // TODO: check actually ubuntu
-        tag = 'ubuntu64';
-        ToolConfig.Validator.distPath = `ubuntu64${path.sep}glslangValidator`;
-        ToolConfig.Optimizer.distPath = `ubuntu64${path.sep}spirv-opt`;
-        ToolConfig.Cross.distPath = `ubuntu64${path.sep}spirv-cross`;
-        break;
-      case 'darwin':
-        tag = 'macos64';
-        ToolConfig.Validator.distPath = `macos64${path.sep}glslangValidator`;
-        ToolConfig.Optimizer.distPath = `macos64${path.sep}spirv-opt`;
-        ToolConfig.Cross.distPath = `macos64${path.sep}spirv-cross`;
-        break;
+  if (!_platConfigured) {
+    _platConfigured = true;
+    if (arch() === 'x64') {
+      switch (platform()) {
+        case 'win32': _platTag = 'win64'; break;
+        case 'linux': _platTag = 'ubuntu64'; break;
+        case 'darwin': _platTag = 'macos64'; break;
+      }
+    }
+    if (_platTag) {
+      (/** @type {[GLSLToolVals, string][]} */(Object.entries(ToolDistPaths[_platTag])))
+        .forEach(([tool, file]) => ToolConfig[tool].distPath = `${_platTag}${path.sep}${file}`);
     }
   }
-  return tag ? {
-    folderPath: path.join(binFolder, tag),
-    tag,
+  return _platTag ? {
+    folderPath: path.join(binFolder, _platTag),
+    tag: _platTag,
     fileList: Object.values(ToolConfig).map((tool) => path.join(binFolder, tool.distPath) ?? ''),
   } : null;
 }
+
 /**
  * @param {GLSLToolVals[]} kinds
  */
@@ -206,7 +226,7 @@ export function launchToolPath(path, workingDir, args) {
  * @param {string} [input]
  * @param {boolean} [echo]
  */
-export async function runToolBuffered({toolProcess, exitPromise}, input = undefined, echo = false) {
+export async function waitForToolBuffered({toolProcess, exitPromise}, input = undefined, echo = false) {
   const stderrPromise = echo ? bufferAndErrLines(parseLines(toolProcess.stderr)) :
     bufferLines(parseLines(toolProcess.stderr));
   const stdoutPromise = echo ? bufferAndOutLines(parseLines(toolProcess.stdout)) :
@@ -231,7 +251,7 @@ export async function runToolBuffered({toolProcess, exitPromise}, input = undefi
  * @param {{toolProcess: import('child_process').ChildProcess, exitPromise: Promise<ToolExitStatus>}} param0
  * @param {string} [input]
  */
-export async function runTool({toolProcess, exitPromise}, input = undefined) {
+export async function waitForTool({toolProcess, exitPromise}, input = undefined) {
   toolProcess.stderr.pipe(process.stderr);
   toolProcess.stdout.pipe(process.stdout);
   if (input !== undefined) {
@@ -243,6 +263,23 @@ export async function runTool({toolProcess, exitPromise}, input = undefined) {
     exitMessage: `exit status: ${exitStatus.code || 'n/a'} ${exitStatus.signal || ''}`,
     exitStatus,
   };
+}
+
+/**
+ * @internal
+ * @param {string} path
+ * @param {string} workingDir
+ * @param {string} title
+ * @param {string[]} args
+ */
+export async function runTool(path, workingDir, title, args) {
+  const toolResult = await waitForTool(launchToolPath(path, workingDir,args));
+  if (toolResult.error) {
+    const errMsg = `${title} failed: ${path} ${toolResult.exitMessage}`;
+    console.error(errMsg);
+    throw new Error(errMsg);
+  }
+  return toolResult;
 }
 
 const argEscapeWindows = (pattern) => {

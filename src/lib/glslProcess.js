@@ -2,10 +2,9 @@ import {EOL} from 'os';
 import * as path from 'path';
 import * as fsSync from 'fs';
 import {insertExtensionPreamble, fixupDirectives} from './preamble.js';
-import {argQuote, configureTools, getCachePath, launchTool, runTool, runToolBuffered} from './tools.js';
+import {argQuote, configureTools, getCachePath, launchTool, waitForToolBuffered} from './tools.js';
 import {checkMakeFolder, rmDir} from './download.js';
 import { compressShader } from './minify.js';
-
 
 /**
  * @typedef {'vert'|'tesc'|'tese'|'geom'|'frag'|'comp'} GLSLStageName
@@ -36,6 +35,27 @@ import { compressShader } from './minify.js';
 
 /**
  * @internal
+ * @param {import('./tools.js').GLSLToolVals} kind
+ * @param {string} title
+ * @param {string} name
+ * @param {string} workingDir
+ * @param {string} input
+ * @param {string[]} params
+ */
+async function glslRunTool(kind, title, name, workingDir, input, params) {
+  const result = await waitForToolBuffered(launchTool(kind, workingDir, params), input);
+  if (result.error) {
+    printToolDiagnostic(result.outLines);
+    printToolDiagnostic(result.errLines);
+    const errMsg = `${title}: ${name} failed, ${result.exitMessage}`;
+    console.error(errMsg);
+    throw new Error(errMsg);
+  }
+  return result.outLines ? result.outLines.join(EOL) : '';
+}
+
+/**
+ * @internal
  * @param {string} name
  * @param {string} workingDir
  * @param {string} stageName
@@ -44,23 +64,22 @@ import { compressShader } from './minify.js';
  * @param {string[]} extraParams
  */
 async function glslRunValidator(name, workingDir, stageName, input, params, extraParams) {
-  const validator = await runToolBuffered(launchTool('Validator',
-      workingDir, [
-        '--stdin',
-        '-C', // cascading errors (don't stop after first)
-        '-t', // Multithreaded
-        '-S', stageName, // Shader type
-        ...params,
-        ...extraParams,
-      ]), input);
-  if (validator.error) {
-    printValidatorDiagnostic(validator.outLines);
-    printValidatorDiagnostic(validator.errLines);
-    const errMsg = `Khronos glslangValidator: ${name} failed, ${validator.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
+  return glslRunTool('Validator', 'Khronos glslangValidator', name, workingDir, input, [
+    '--stdin',
+    '-C', // cascading errors (don't stop after first)
+    '-t', // Multithreaded
+    '-S', stageName, // Shader type
+    ...params,
+    ...extraParams,
+  ]);
+}
+
+function printToolDiagnostic(lines) {
+  for (const line of lines) {
+    if (line.length && line !== 'stdin') {
+      console.error(line);
+    }
   }
-  return validator.outLines.join(EOL);
 }
 
 /**
@@ -76,24 +95,15 @@ async function glslRunValidator(name, workingDir, stageName, input, params, extr
  */
 async function glslRunOptimizer(name, workingDir, inputFile, outputFile, input,
     preserveUnusedBindings = true, params, extraParams) {
-  const optimizer = await runToolBuffered(launchTool('Optimizer',
-      workingDir, [
-        '-O', // optimize for performance
-        '--target-env=opengl4.0', // One of opengl4.0|opengl4.1|opengl4.2|opengl4.3|opengl4.5
-        ...(preserveUnusedBindings ? ['--preserve-bindings'] : []),
-        ...params,
-        ...extraParams,
-        ...argQuote(inputFile),
-        '-o', ...argQuote(outputFile),
-      ]), input);
-  if (optimizer.error) {
-    printValidatorDiagnostic(optimizer.outLines);
-    printValidatorDiagnostic(optimizer.errLines);
-    const errMsg = `Khronos spirv-opt: ${name} failed, ${optimizer.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
-  return optimizer.outLines ? optimizer.outLines.join(EOL) : '';
+  return glslRunTool('Optimizer', 'Khronos spirv-opt', name, workingDir, input, [
+    '-O', // optimize for performance
+    '--target-env=opengl4.0', // One of opengl4.0|opengl4.1|opengl4.2|opengl4.3|opengl4.5
+    ...(preserveUnusedBindings ? ['--preserve-bindings'] : []),
+    ...params,
+    ...extraParams,
+    ...argQuote(inputFile),
+    '-o', ...argQuote(outputFile),
+  ]);
 }
 
 /**
@@ -108,22 +118,13 @@ async function glslRunOptimizer(name, workingDir, inputFile, outputFile, input,
  * @param {string[]} extraParams
  */
 async function glslRunCross(name, workingDir, stageName, inputFile, input, emitLineInfo, params, extraParams) {
-  const cross = await runToolBuffered(launchTool('Cross',
-      workingDir, [
-        ...argQuote(inputFile),
-        ...(emitLineInfo ? ['--emit-line-directives'] : []),
-        `--stage`, stageName,
-        ...params,
-        ...extraParams,
-      ]), input);
-  if (cross.error) {
-    printValidatorDiagnostic(cross.outLines);
-    printValidatorDiagnostic(cross.errLines);
-    const errMsg = `Khronos spirv-cross: ${name} failed, ${cross.exitMessage}`;
-    console.error(errMsg);
-    throw new Error(errMsg);
-  }
-  return cross.outLines ? cross.outLines.join(EOL) : '';
+  return glslRunTool('Cross', 'Khronos spirv-cross', name, workingDir, input, [
+    ...argQuote(inputFile),
+    ...(emitLineInfo ? ['--emit-line-directives'] : []),
+    `--stage`, stageName,
+    ...params,
+    ...extraParams,
+  ]);
 }
 
 /**
@@ -269,12 +270,4 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
 
   return outputGLSL;
 
-}
-
-function printValidatorDiagnostic(lines) {
-  for (const line of lines) {
-    if (line.length && line !== 'stdin') {
-      console.error(line);
-    }
-  }
 }
