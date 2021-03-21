@@ -132,5 +132,5 @@ Released under the [MIT license](LICENSE).
 [dev-dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize?type=dev
 [cc-maintainability]: https://api.codeclimate.com/v1/badges/b1dfc39fd650dd54f730/maintainability
 [cc-maintainability-url]: https://codeclimate.com/github/docd27/rollup-plugin-glsl-optimize/maintainability
-[coverage]: https://coveralls.io/repos/github/docd27/rollup-plugin-glsl-optimize/badge.svg?branch=master
+[coverage]: https://img.shields.io/coveralls/github/docd27/rollup-plugin-glsl-optimize
 [coverage-url]: https://coveralls.io/github/docd27/rollup-plugin-glsl-optimize?branch=master
