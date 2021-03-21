@@ -3,9 +3,11 @@
 [![Node.js CI][ci]][ci-url]
 [![NPM Publish][npm-publish]][npm-publish-url]
 [![Tool Binaries][tool-binaries]][tool-binaries-url]
+
+[![Maintainability][cc-maintainability]][cc-maintainability-url]
+[![Coverage Status][coverage]][coverage-url]
 [![Dependencies][dependencies]][dependencies-url]
 [![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
-[![Maintainability][cc-maintainability]][cc-maintainability-url]
 
 Import GLSL source files as strings. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
 
@@ -130,3 +132,5 @@ Released under the [MIT license](LICENSE).
 [dev-dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize?type=dev
 [cc-maintainability]: https://api.codeclimate.com/v1/badges/b1dfc39fd650dd54f730/maintainability
 [cc-maintainability-url]: https://codeclimate.com/github/docd27/rollup-plugin-glsl-optimize/maintainability
+[coverage]: https://coveralls.io/repos/github/docd27/rollup-plugin-glsl-optimize/badge.svg?branch=master
+[coverage-url]: https://coveralls.io/github/docd27/rollup-plugin-glsl-optimize?branch=master
