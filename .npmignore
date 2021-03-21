@@ -7,6 +7,7 @@ bin/
 build/
 typings-autogen/
 .github/
+coverage/
 
 # Logs
 logs
