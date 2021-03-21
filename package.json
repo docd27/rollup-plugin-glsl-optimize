@@ -31,7 +31,7 @@
     "bundle": "npx rollup -c rollup.config.package.mjs",
     "build": "rimraf ./dist && npm run types && npm run bundle",
     "test": "mocha test/dist.test.js",
-    "coverage": "c8 --reporter=lcov mocha test/src.test.js",
+    "coverage": "c8 --include src/** --reporter=lcov mocha test/src.test.js",
     "cleanrelease": "rimraf bin && rimraf build && rimraf typings-autogen && rimraf coverage",
     "clean": "rimraf bin && rimraf build && rimraf typings-autogen && rimraf dist && rimraf coverage"
   },
