@@ -7,7 +7,18 @@ const fatalError = (err) => {
   console.error(err);
   console.error(`Installing required binary tools failed.`);
   console.error(`\n** Manual Khronos tool installation required **\n\n${allToolInfo()}`);
-  process.exit(0); // Allow npm install to proceed
+  installStatus.message = err;
+  installStatus.error = true;
+  installStatus.done = true;
+  process.exitCode = 0; // Allow npm install to proceed
+};
+
+// For test instrumentation
+export const installStatus = {
+  done: false,
+  installed: false,
+  error: false,
+  message: undefined,
 };
 
 (async function main() {
@@ -15,12 +26,14 @@ const fatalError = (err) => {
 
   if (!binSource || !binSource.tag) {
     fatalError('Prebuilt binaries not available for this platform');
+    return;
   }
 
   if (allFilesExist(binSource.fileList)) {
     console.info('All binaries already installed');
     fixPerms(binSource.fileList);
-    process.exit(0);
+    installStatus.done = true;
+    return;
   }
 
   const downloadBaseURL = getPkg()?.installBinaries?.url;
@@ -28,12 +41,14 @@ const fatalError = (err) => {
 
   if (!downloadBaseURL || !downloadTag) {
     fatalError('No configured download URL');
+    return;
   }
 
   try {
     checkMakeFolder(binSource.folderPath);
   } catch (err) {
     fatalError('Failed to create output folder');
+    return;
   }
 
   const downloadArchiveName = `${binSource.tag}.zip`;
@@ -50,13 +65,18 @@ const fatalError = (err) => {
       fixPerms(binSource.fileList);
     } else {
       fatalError('Downloaded archive did not include the expected binaries');
+      return;
     }
 
   } catch (err) {
     console.log(err);
     fatalError(`Failed to download binaries for ${binSource.tag}\n${err.message}`);
+    return;
   }
 
+  installStatus.installed = true;
   console.log('Install completed');
-  process.exit(0);
+  installStatus.done = true;
+
 })();
+

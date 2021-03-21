@@ -2,8 +2,8 @@ import {rollup} from 'rollup';
 import {assert} from 'chai';
 
 
-/** @param {typeof import('../src/index.js').default} glslOptimize */
-export default function runTests(glslOptimize) {
+/** @param {typeof import('../../src/index.js').default} glslOptimize */
+export function shaderTests(glslOptimize) {
   process.chdir('test');
   describe('Shader', function() {
     it('should preserve all exports when just preprocessing', async function() {
