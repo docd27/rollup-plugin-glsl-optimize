@@ -1,15 +1,19 @@
 import {EOL} from 'os';
 import * as path from 'path';
 import * as fsSync from 'fs';
-import {insertExtensionPreamble, fixupDirectives} from './preamble.js';
+import {insertExtensionPreamble, fixupDirectives, insertPreamble} from './preamble.js';
 import {argQuote, configureTools, getCachePath, launchTool, waitForToolBuffered} from './tools.js';
 import {checkMakeFolder, rmDir} from './download.js';
-import { compressShader } from './minify.js';
+import {compressShader} from './minify.js';
+import * as crypto from 'crypto';
+import MagicString from 'magic-string';
 
 /**
  * @typedef {'vert'|'tesc'|'tese'|'geom'|'frag'|'comp'} GLSLStageName
  *
  * @typedef {Object} GLSLToolSharedOptions
+ * @property {boolean} sourceMap
+ *   Emit source maps
  * @property {boolean} compress
  *  Strip whitespace
  * @property {boolean} optimize
@@ -128,17 +132,31 @@ async function glslRunCross(name, workingDir, stageName, inputFile, input, emitL
 }
 
 /**
+ * Generate unique build path
+ * @param {string} id
+ * @return {string}
+ */
+function getBuildDir(id) {
+  const sanitizeID = path.basename(id).replace(/([^a-z0-9]+)/gi, '-').toLowerCase();
+  const uniqID = ((Date.now()>>>0) + crypto.randomBytes(4).readUInt32LE())>>>0; // +ve 4 byte unique ID
+  const uniqIDHex = uniqID.toString(16).padStart(8, '0'); // 8 char random hex
+  return path.join(getCachePath(), 'glslBuild', `${sanitizeID}-${uniqIDHex}`);
+}
+
+/**
  * @internal
  * @param {string} id File path
  * @param {string} source Source code
  * @param {GLSLStageName} stageName
  * @param {Partial<GLSLToolOptions>} [glslOptions]
  * @param {(message: string) => void} [errorLog]
+ * @return {Promise<import('rollup').SourceDescription>}
  */
 export async function glslProcessSource(id, source, stageName, glslOptions = {}, errorLog = console.error) {
 
   /** @type {GLSLToolOptions} */
   const options = {
+    sourceMap: true,
     compress: true,
     optimize: true,
     emitLineDirectives: false,
@@ -157,7 +175,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
 
   let tempBuildDir;
   if (options.optimize) {
-    tempBuildDir = path.join(getCachePath(), 'glslBuild');
+    tempBuildDir = getBuildDir(id);
     rmDir(tempBuildDir);
     checkMakeFolder(tempBuildDir);
   }
@@ -209,7 +227,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
     ...options.extraValidatorParams,
   ];
 
-  let outputGLSL;
+  let processedGLSL;
 
   if (options.optimize) {
     const outputBuild = await glslRunValidator('Build spirv', targetDir, stageName,
@@ -233,11 +251,11 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
             // '--print-all', // Print spirv for debugging
           ], options.extraOptimizerParams);
       if (!fsSync.existsSync(optimizedFileAbs)) {
-        throw new Error(`Optimize spirv failed: no output file`);
+        throw new Error(`Optimize spirv failed: no output file (${optimizedFileAbs})`);
       }
     }
 
-    outputGLSL = await glslRunCross('Build spirv to GLSL', targetDir, stageName,
+    processedGLSL = await glslRunCross('Build spirv to GLSL', targetDir, stageName,
       options.optimizerDebugSkipOptimizer ? outputFileAbs : optimizedFileAbs, undefined, options.emitLineDirectives, [
         '--es', // WebGL is always ES
         '--version', `${targetGlslVersion}`,
@@ -252,22 +270,42 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
 
 
   } else {
-    outputGLSL = await glslRunValidator('Preprocessing', targetDir, stageName, code, [
+    processedGLSL = await glslRunValidator('Preprocessing', targetDir, stageName, code, [
       '-E', // print pre-processed GLSL
     ], extraValidatorParams);
     const outputValidated = await glslRunValidator('Validation', targetDir, stageName,
-      outputGLSL, [], extraValidatorParams);
+      processedGLSL, [], extraValidatorParams);
   }
 
-  outputGLSL = fixupDirectives(outputGLSL,
+  processedGLSL = fixupDirectives(processedGLSL,
     options.emitLineDirectives && !options.suppressLineExtensionDirective,
     didInsertion && (!options.optimize || options.emitLineDirectives),
     options.optimize, !options.emitLineDirectives, undefined);
 
-  if (options.compress) {
-    outputGLSL = compressShader(outputGLSL);
+
+  const outputCode = options.compress ? compressShader(processedGLSL) : processedGLSL;
+
+  /** @type {import('rollup').LoadResult} */
+  const result = {
+    code: outputCode,
+    map: {mappings: ''},
+  };
+
+  if (options.sourceMap) {
+    const sourceMapSource = insertPreamble(processedGLSL,
+      '/*\n' +
+      `* Preprocessed${options.optimize?' + Optimized':''} from '${targetID}'\n` +
+      (options.compress ? '* [Embedded string is compressed]\n':'') +
+      '*/'
+      ).code;
+    const magicString = new MagicString(sourceMapSource);
+    result.map = magicString.generateMap({
+      source: id,
+      includeContent: true,
+      hires: true,
+    });
   }
 
-  return outputGLSL;
+  return result;
 
 }

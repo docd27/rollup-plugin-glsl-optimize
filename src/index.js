@@ -1,6 +1,6 @@
 import {createFilter} from '@rollup/pluginutils';
-import MagicString from 'magic-string';
 import { glslProcessSource } from './lib/glslProcess.js';
+import * as fsSync from 'fs';
 
 /**
  * @typedef {import('./lib/glslProcess').GLSLStageName} GLSLStageName
@@ -18,7 +18,9 @@ const stageDefs = {
 
 const extsInclude = Object.values(stageDefs).flatMap(
   (exts) => exts.map((ext) => `**/*${ext}`));
-const stageRegexes = new Map(
+
+/** @type {[GLSLStageName, RegExp][]} */
+const stageRegexes = (
   /** @type {[GLSLStageName, string[]][]} */(Object.entries(stageDefs))
   .map(([st, exts]) => [st,
     new RegExp(`(?:${exts.map(ext => ext.replace('.', '\\.')).join('|')})$`, 'i')
@@ -35,8 +37,6 @@ function generateCode(source) {
  *   File extensions within rollup to include.
  * @property {PathFilter} [exclude]
  *   File extensions within rollup to exclude.
- * @property {boolean} [sourceMap]
- *   Emit source maps
  * @typedef {GLSLPluginGlobalOptions & Partial<import('./lib/glslProcess').GLSLToolOptions>} GLSLPluginOptions
  */
 /**
@@ -47,7 +47,6 @@ export default function glslOptimize(userOptions = {}) {
   /** @type {GLSLPluginOptions} */
   const options = {
     include: extsInclude,
-    sourceMap: true,
     ...userOptions,
   };
 
@@ -56,41 +55,36 @@ export default function glslOptimize(userOptions = {}) {
   return {
     name: 'glsl-optimize',
 
-    async transform(code, id) {
+    async load(id) {
       if (!id || !filter(id)) return;
 
-      /** @type {GLSLStageName} */
-      let stage;
-      for (const [checkStage, regex] of stageRegexes) {
-        if (id.match(regex)) {
-          stage = checkStage;
-          break;
-        }
+      /*
+        We use a load hook instead of transform because we want sourcemaps
+        to reflect the optimized shader source.
+      */
+      if (!fsSync.existsSync(id)) return;
+      let source;
+      try {
+        source = fsSync.readFileSync(id, {encoding: 'utf8'});
+      } catch (err) {
+        this.warn(`Failed to load file '${id}' : ${err.message}`);
+        return;
       }
+
+      /** @type {GLSLStageName} */
+      const stage = stageRegexes.find(([, regex]) => id.match(regex))?.[0];
       if (!stage) {
         this.error({ message: `File '${id}' : extension did not match a shader stage.` });
         return;
       }
+
       try {
-        code = await glslProcessSource(id, code, stage, options);
+        const result = await glslProcessSource(id, source, stage, options);
+        result.code = generateCode(result.code);
+        return result;
       } catch (err) {
         this.error({ message: `Error processing GLSL source:\n${err.message}` });
         return;
-      }
-
-      code = generateCode(code);
-
-      if (options.sourceMap !== false) {
-        const magicString = new MagicString(code);
-        return {
-          code: magicString.toString(),
-          map: magicString.generateMap({hires: true}),
-        };
-      } else {
-        return {
-          code,
-          map: {mappings: ''},
-        };
       }
     },
   };
