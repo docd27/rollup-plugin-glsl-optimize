@@ -75,7 +75,6 @@ export default function glslOptimize(userOptions = {}) {
       const stage = stageRegexes.find(([, regex]) => id.match(regex))?.[0];
       if (!stage) {
         this.error({ message: `File '${id}' : extension did not match a shader stage.` });
-        return;
       }
 
       try {
@@ -84,7 +83,6 @@ export default function glslOptimize(userOptions = {}) {
         return result;
       } catch (err) {
         this.error({ message: `Error processing GLSL source:\n${err.message}` });
-        return;
       }
     },
   };
