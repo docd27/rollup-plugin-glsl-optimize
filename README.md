@@ -98,7 +98,7 @@ The following shader stages are supported by the Khronos tools and recognized by
 - `optimize` : ``boolean`` (default true) Optimize via SPIR-V as described in the Optimization section [requires WebGL2 / GLSL ES >= 300]. When disabled simply runs the preprocessor [all supported GLSL versions].
 - ``compress`` : ``boolean`` (default true) Strip all whitespace in the sources
 - ``includePaths`` : ``string[]`` (default undefined) Additional search paths for ``#include`` directive (source file directory is always searched)
-- ``sourceMap`` : ``boolean`` (default true) Emit source maps (for the final GLSL source within Javascript)
+- ``sourceMap`` : ``boolean`` (default true) Emit source maps. These contain the final preprocessed/optimized GLSL source (but not stripped of whitespace) to aid debugging.
 - ``emitLineDirectives`` : ``boolean`` (default false) Emit ``#line NN "original.file"`` directives for debugging - useful with ``#include``. Note this requires the ``GL_GOOGLE_cpp_style_line_directive`` extension so the shader will fail to run in drivers that lack support.
 - ``optimizerPreserveUnusedBindings`` : ``boolean`` (default true) Ensure that the optimizer preserves all declared bindings, even when those bindings are unused.
 - ``preamble`` : ``string`` (default undefined) Prepended to the shader source (after the #version directive, before the preprocessor runs)
