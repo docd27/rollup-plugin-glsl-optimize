@@ -30,8 +30,10 @@ This plugin uses binaries from the [Khronos Glslang Validator](https://github.co
 
 They are automatically installed for:
 * Windows 64bit (MSVC 2017)
-* Ubuntu Trusty / Debian amd64 (clang)
 * MacOS x86_64 (clang)
+* Ubuntu Trusty / Debian Buster amd64 (clang)
+* Untested: Other amd64 Linux distros, arm64 MacOS
+
 
 Paths can also be manually provided / overridden with the ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` environment variables.
 
