@@ -38,9 +38,10 @@
     "bundle": "npx rollup -c rollup.config.package.mjs",
     "build": "rimraf ./dist && npm run types && npm run bundle",
     "test": "mocha test/dist.test.js",
+    "testsrc": "mocha test/src.test.js",
     "coverage": "c8 --include 'src/**' --reporter=lcov mocha test/src.test.js",
-    "cleanrelease": "rimraf bin && rimraf build && rimraf typings-autogen && rimraf coverage",
-    "clean": "rimraf bin && rimraf build && rimraf typings-autogen && rimraf dist && rimraf coverage"
+    "cleanrelease": "npm uninstall glslify && rimraf bin && rimraf build && rimraf typings-autogen && rimraf coverage",
+    "clean": "npm uninstall glslify && rimraf dist && rimraf bin && rimraf build && rimraf typings-autogen && rimraf coverage"
   },
   "installBinaries": {
     "url": "https://github.com/docd27/rollup-plugin-glsl-optimize/releases/download/",
@@ -61,6 +62,7 @@
     "@types/node": "^14.14.35",
     "c8": "^7.6.0",
     "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
     "del": "^6.0.0",
     "eslint": "^7.22.0",
     "eslint-config-google": "^0.14.0",

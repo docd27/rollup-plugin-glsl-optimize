@@ -4,11 +4,10 @@ import {assert} from 'chai';
 
 /** @param {typeof import('../../src/index.js').default} glslOptimize */
 export function shaderTests(glslOptimize) {
-  process.chdir('test');
   describe('Shader', function() {
     it('should preserve all exports when just preprocessing', async function() {
       const bundle = await rollup({
-          input: 'fixtures/basic.js',
+          input: 'test/fixtures/basic.js',
           plugins: [glslOptimize({ optimize: false })],
       });
       const generated = await bundle.generate({ format: 'es' });
@@ -18,7 +17,7 @@ export function shaderTests(glslOptimize) {
     });
     it('should optimize out unused exports', async function() {
       const bundle = await rollup({
-          input: 'fixtures/basic.js',
+          input: 'test/fixtures/basic.js',
           plugins: [glslOptimize({ optimize: true })],
       });
       const generated = await bundle.generate({ format: 'es' });
