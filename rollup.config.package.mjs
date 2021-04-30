@@ -42,7 +42,7 @@ export default [{
   },
   plugins: [
     earlyDel([OUTPUT_FILE]),
-    resolve(),
+    resolve({modulesOnly: true, preferBuiltins: true}),
     commonjs(),
     cleanup({
       comments: 'sources',
@@ -58,6 +58,7 @@ export default [{
     'https-proxy-agent',
     'magic-string',
     'progress',
+    'glslify',
   ],
 },
 ];

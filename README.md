@@ -79,6 +79,11 @@ With ``optimize: true`` (default) shaders will also be compiled to SPIR-V (openg
 
   *\* Since SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
 
+### Support for glslify
+Specify ``glslify: true`` to process shader sources with [glslify](https://github.com/glslify/glslify) (a node.js-style module system for GLSL) prior to all preprocessing, validation and optimization.
+
+*Install glslify in your devDependencies with ``npm i -D glslify``*
+
 ## Shader stages
 
 The following shader stages are supported by the Khronos tools and recognized by file extension:
@@ -104,6 +109,8 @@ The following shader stages are supported by the Khronos tools and recognized by
 - ``emitLineDirectives`` : ``boolean`` (default false) Emit ``#line NN "original.file"`` directives for debugging - useful with ``#include``. Note this requires the ``GL_GOOGLE_cpp_style_line_directive`` extension so the shader will fail to run in drivers that lack support.
 - ``optimizerPreserveUnusedBindings`` : ``boolean`` (default true) Ensure that the optimizer preserves all declared bindings, even when those bindings are unused.
 - ``preamble`` : ``string`` (default undefined) Prepended to the shader source (after the #version directive, before the preprocessor runs)
+- ``glslify`` : ``boolean`` (default false) Process sources using glslify prior to all preprocessing, validation and optimization.
+- ``glslifyOptions`` (default undefined) When ``glslify`` enabled, pass these [additional options](https://github.com/glslify/glslify#module-api) to ``glslify.compile()``.
 ### Advanced Options
 - ``optimizerDebugSkipOptimizer`` : ``boolean`` (default false) When ``optimize`` enabled, skip the SPIR-V optimizer - compiles to SPIR-V then cross-compiles back to GLSL immediately.
 - ``suppressLineExtensionDirective`` : ``boolean`` (default false) When `emitLineDirectives` enabled, suppress the ``GL_GOOGLE_cpp_style_line_directive`` directive.

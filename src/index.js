@@ -1,5 +1,6 @@
 import {createFilter} from '@rollup/pluginutils';
 import { glslProcessSource } from './lib/glslProcess.js';
+import {dirname} from 'path';
 import * as fsSync from 'fs';
 
 /**
@@ -33,11 +34,20 @@ function generateCode(source) {
 /**
  * @typedef {Array<string | RegExp> | string | RegExp | null} PathFilter
  * @typedef {Object} GLSLPluginGlobalOptions
- * @property {PathFilter} [include]
+ * @property {PathFilter} include
  *   File extensions within rollup to include.
- * @property {PathFilter} [exclude]
+ * @property {PathFilter} exclude
  *   File extensions within rollup to exclude.
+ * @property {boolean} glslify
+ *   Process sources using glslify prior to all preprocessing, validation and optimization.
+ * @property {Partial<GlslifyOptions>} glslifyOptions
+ *   When glslify enabled, pass these additional options to glslify.compile()
  * @typedef {GLSLPluginGlobalOptions & Partial<import('./lib/glslProcess').GLSLToolOptions>} GLSLPluginOptions
+ */
+/**
+ * @typedef {Object} GlslifyBaseOptions
+ * @property {string} basedir
+ * @typedef {{[key: string]: any} & GlslifyBaseOptions} GlslifyOptions
  */
 /**
  * @param {Partial<GLSLPluginOptions>} userOptions
@@ -45,15 +55,34 @@ function generateCode(source) {
  */
 export default function glslOptimize(userOptions = {}) {
   /** @type {GLSLPluginOptions} */
-  const options = {
+  const pluginOptions = {
     include: extsInclude,
+    exclude: [],
+    glslify: false,
+    glslifyOptions: {},
     ...userOptions,
   };
 
-  const filter = createFilter(options.include, options.exclude);
+  const filter = createFilter(pluginOptions.include, pluginOptions.exclude);
+
+  /** @type {{(src:string, opts:GlslifyOptions):string}} */
+  let glslifyCompile;
 
   return {
     name: 'glsl-optimize',
+
+    async options(options) {
+      if (pluginOptions.glslify) { // Try to dynamically load glslify if installed
+        try {
+          // @ts-ignore
+          const glslify = await import('glslify');
+          if (glslify && glslify.compile && typeof glslify.compile === 'function') {
+            glslifyCompile = glslify.compile;
+          }
+        } catch {}
+      }
+      return options;
+    },
 
     async load(id) {
       if (!id || !filter(id)) return;
@@ -77,8 +106,24 @@ export default function glslOptimize(userOptions = {}) {
         this.error({ message: `File '${id}' : extension did not match a shader stage.` });
       }
 
+      if (pluginOptions.glslify) {
+        if (!glslifyCompile) {
+          this.error({ message: `glslify could not be found. Install it with npm i -D glslify`});
+        }
+        /** @type {GlslifyOptions} */
+        const glslifyOptions = {
+          basedir: dirname(id),
+          ...pluginOptions.glslifyOptions,
+        }
+        try {
+          source = glslifyCompile(source, glslifyOptions);
+        } catch (err) {
+          this.error({ message: `Error processing GLSL source with glslify:\n${err.message}` });
+        }
+      }
+
       try {
-        const result = await glslProcessSource(id, source, stage, options);
+        const result = await glslProcessSource(id, source, stage, pluginOptions);
         result.code = generateCode(result.code);
         return result;
       } catch (err) {

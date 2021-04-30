@@ -308,3 +308,18 @@ export const getCachePath = () => {
   }
   return _cachePath;
 };
+
+
+let _npmCommand;
+/**
+ * @internal
+ * @param {string[]} args
+ * @param {string} [workingDir]
+ */
+export async function npmCommand(args, workingDir = settings.PROJECT_ROOT) {
+  if (!_npmCommand) {
+    _npmCommand = platform() === 'win32' ? 'npm.cmd' : 'npm';
+  }
+  return runTool(_npmCommand, workingDir, 'npm', args);
+}
+
