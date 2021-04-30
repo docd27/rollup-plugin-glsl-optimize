@@ -102,15 +102,19 @@ The following shader stages are supported by the Khronos tools and recognized by
 ## Options
 - `include` : `PathFilter` (default table above) File extensions within rollup to include. Though this option can be reconfigured, shader stage detection still operates based on the table above.
 - `exclude` : `PathFilter` (default ``undefined``) File extensions within rollup to exclude.
+- ``includePaths`` : ``string[]`` (default undefined) Additional search paths for ``#include`` directive (source file directory is always searched)
+### Features
 - `optimize` : ``boolean`` (default true) Optimize via SPIR-V as described in the Optimization section [requires WebGL2 / GLSL ES >= 300]. When disabled simply runs the preprocessor [all supported GLSL versions].
 - ``compress`` : ``boolean`` (default true) Strip all whitespace in the sources
-- ``includePaths`` : ``string[]`` (default undefined) Additional search paths for ``#include`` directive (source file directory is always searched)
+### Debugging
 - ``sourceMap`` : ``boolean`` (default true) Emit source maps. These contain the final preprocessed/optimized GLSL source (but not stripped of whitespace) to aid debugging.
 - ``emitLineDirectives`` : ``boolean`` (default false) Emit ``#line NN "original.file"`` directives for debugging - useful with ``#include``. Note this requires the ``GL_GOOGLE_cpp_style_line_directive`` extension so the shader will fail to run in drivers that lack support.
+### Preprocessor
 - ``optimizerPreserveUnusedBindings`` : ``boolean`` (default true) Ensure that the optimizer preserves all declared bindings, even when those bindings are unused.
 - ``preamble`` : ``string`` (default undefined) Prepended to the shader source (after the #version directive, before the preprocessor runs)
+### glslify
 - ``glslify`` : ``boolean`` (default false) Process sources using glslify prior to all preprocessing, validation and optimization.
-- ``glslifyOptions`` (default undefined) When ``glslify`` enabled, pass these [additional options](https://github.com/glslify/glslify#module-api) to ``glslify.compile()``.
+- ``glslifyOptions`` (default undefined) When ``glslify`` enabled, pass these [additional options](https://github.com/glslify/glslify#var-src--glslcompilesrc-opts) to ``glslify.compile()``.
 ### Advanced Options
 - ``optimizerDebugSkipOptimizer`` : ``boolean`` (default false) When ``optimize`` enabled, skip the SPIR-V optimizer - compiles to SPIR-V then cross-compiles back to GLSL immediately.
 - ``suppressLineExtensionDirective`` : ``boolean`` (default false) When `emitLineDirectives` enabled, suppress the ``GL_GOOGLE_cpp_style_line_directive`` directive.
