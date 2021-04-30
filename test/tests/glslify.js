@@ -4,12 +4,12 @@ import {assert} from 'chai';
 import * as fsSync from 'fs';
 
 async function glslifyUninstall() {
-  await npmCommand(['uninstall', 'glslify']);
+  await npmCommand(['uninstall', 'glslify', 'glsl-noise']);
   assert.isFalse(fsSync.existsSync('node_modules/glslify'), 'glslify failed to uninstall');
 }
 
 async function glslifyInstall() {
-  await npmCommand(['install', '--no-save', 'glslify']);
+  await npmCommand(['install', '--no-save', 'glslify', 'glsl-noise']);
       assert.isTrue(fsSync.existsSync('node_modules/glslify'), 'glslify failed to install');
 }
 
@@ -62,6 +62,16 @@ export function glslifyTests(glslOptimize) {
       const code = generated.output[0].code;
       assert.notInclude(code, 'sub1', 'sub1 was not inlined');
       assert.notInclude(code, 'sub2', 'sub2 was not inlined');
+    });
+    it('should import glsl-noise correctly', async function() {
+      const bundle = await rollup({
+        input: 'test/fixtures/glslify-noise.js',
+        plugins: [glslOptimize({glslify: true, optimize: false, compress: false})],
+      });
+      const generated = await bundle.generate({ format: 'es' });
+      const code = generated.output[0].code;
+      assert.include(code, 'taylorInvSqrt', 'taylorInvSqrt was not included');
+      assert.notInclude(code, 'pragma glslify', 'pragma glslify was left in');
     });
   });
 }
