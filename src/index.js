@@ -17,8 +17,12 @@ const stageDefs = {
   'tese': [ '.tese', '.tese.glsl' ],
 };
 
-const extsInclude = Object.values(stageDefs).flatMap(
-  (exts) => exts.map((ext) => `**/*${ext}`));
+const extsIncludeDefault = [...Object.values(stageDefs).flatMap(
+  (exts) => exts.map((ext) => `**/*${ext}`)),
+  '**/*.glsl',
+  // Additionally include all *.glsl by default so we throw an error
+  // if the user includes a file extension without a stage
+];
 
 /** @type {[GLSLStageName, RegExp][]} */
 const stageRegexes = (
@@ -56,7 +60,7 @@ function generateCode(source) {
 export default function glslOptimize(userOptions = {}) {
   /** @type {GLSLPluginOptions} */
   const pluginOptions = {
-    include: extsInclude,
+    include: extsIncludeDefault,
     exclude: [],
     glslify: false,
     glslifyOptions: {},
