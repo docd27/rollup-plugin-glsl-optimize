@@ -1,15 +1,13 @@
 # rollup-plugin-glsl-optimize
 [![NPM Package][npm]][npm-url]
 [![Changelog][changelog]][changelog-url]
-![Node Version][node-version]
-![Types][types]\
-[![Maintainability][cc-maintainability]][cc-maintainability-url]
-[![Coverage Status][coverage]][coverage-url]
+[![Node Version][node-version]](#)
+[![Types][types]](#)
+[![Maintainability][cc-maintainability]][cc-maintainability-url]\
 [![Dependencies][dependencies]][dependencies-url]
-[![Dev Dependencies][dev-dependencies]][dev-dependencies-url]\
+[![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
+[![Coverage Status][coverage]][coverage-url]
 [![Node.js CI][ci]][ci-url]
-[![NPM Publish][npm-publish]][npm-publish-url]
-[![Tool Binaries][tool-binaries]][tool-binaries-url]
 
 Import GLSL source files as strings. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
 
@@ -19,23 +17,50 @@ Primary use-case is processing WebGL2 / GLSL ES 300 shaders.
 import frag from './shaders/myShader.frag';
 console.log(frag);
 ```
+
+## Features
+
+### GLSL Optimizer
+*For WebGL2 / GLSL ES >= 300*
+
+With ``optimize: true`` (default) shaders will be compiled to SPIR-V (opengl semantics) and optimized for performance using the [Khronos SPIR-V Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) before being cross-compiled back to GLSL.
+
+### Shader Preprocessor
+Shaders are preprocessed and validated using the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang).
+
+Macros are run at build time with support for C-style ``#include`` directives: \*
+
+```glsl
+#version 300 es
+#include "postProcessingShared.glsl"
+#include "dofCircle.glsl"
+
+void main() {
+  outColor = CircleDof(UVAndScreenPos, Color, ColorCoc);
+}
+```
+*\* Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is not required nor recommended in your final inlined code.*
+
+### Supports glslify
+Specify ``glslify: true`` to process shader sources with [glslify](https://github.com/glslify/glslify) (a node.js-style module system for GLSL).
+
+*And install glslify in your devDependencies with ``npm i -D glslify``*
+
 ## Installation
 
 ```sh
 npm i rollup-plugin-glsl-optimize -D
 ```
 
-### Khronos tool binaries
-This plugin uses binaries from the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang), [Khronos SPIRV-Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) and [Khronos SPIRV Cross compiler](https://github.com/KhronosGroup/SPIRV-Cross).
+### Khronos tools
+This plugin uses the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang), [Khronos SPIRV-Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) and [Khronos SPIRV Cross compiler](https://github.com/KhronosGroup/SPIRV-Cross).
 
-They are automatically installed for:
+Binaries are automatically installed for:
 * Windows 64bit (MSVC 2017)
 * MacOS x86_64 (clang)
 * Ubuntu Trusty / Debian Buster amd64 (clang)
-* Untested: Other amd64 Linux distros, arm64 MacOS
 
-
-Paths can also be manually provided / overridden with the ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` environment variables.
+*Paths can be manually provided / overridden with the ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` environment variables.*
 
 ## Usage
 ```js
@@ -49,40 +74,6 @@ export default {
     ]
 };
 ```
-
-## Features
-
-### Preprocessing and Validation
-Shaders are pre-processed and validated using the [Khronos Glslang Validator](https://github.com/KhronosGroup/glslang).
-
-Macros are run at build time with support for C-style ``#include`` directives: \*
-
-```glsl
-#version 300 es
-
-#include "postProcessingShared.glsl"
-#include "dofCircle.glsl"
-
-void main() {
-  outColor = CircleDof(UVAndScreenPos, Color, ColorCoc);
-}
-```
-*\* Via the ``GL_GOOGLE_include_directive`` extension. But an ``#extension`` directive is not required nor recommended in your final inlined code.*
-
-### Optimization
-**Requires WebGL2 / GLSL ES >= 300**
-
-With ``optimize: true`` (default) shaders will also be compiled to SPIR-V (opengl semantics) and optimized for performance using the [Khronos SPIR-V Tools Optimizer](https://github.com/KhronosGroup/SPIRV-Tools) before being cross-compiled back to GLSL.
-
-#### Known Issues / Caveats
-* ``lowp`` precision qualifier - emitted as ``mediump`` \*
-
-  *\* Since SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
-
-### Support for glslify
-Specify ``glslify: true`` to process shader sources with [glslify](https://github.com/glslify/glslify) (a node.js-style module system for GLSL) prior to all preprocessing, validation and optimization.
-
-*Install glslify in your devDependencies with ``npm i -D glslify``*
 
 ## Shader stages
 
@@ -124,27 +115,25 @@ The following shader stages are supported by the Khronos tools and recognized by
 ## Changelog
 Available in [CHANGES.md](CHANGES.md).
 
+#### Caveats & Known Issues
+* This plugin handles glsl and glsify by itself. Use with conflicting plugins (e.g. rollup-plugin-glsl, rollup-plugin-glslify) will cause unpredictable results.
+* Optimizer: ``lowp`` precision qualifier - emitted as ``mediump``\
+  *SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
+
 ## License
 
-Released under the [MIT license](LICENSE).
+Released under the [MIT license](LICENSE).\
+*Thanks to Vincent Wochnik ([rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)) for the whitespace minification code.*
 
-*Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files in the ``bin`` folder.*
-
-## See also
-
-* [rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)
+Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files in the ``bin`` folder.
 
 [ci]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml/badge.svg
 [ci-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml
-[tool-binaries]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml/badge.svg
-[tool-binaries-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/khronos-binaries.yml
-[npm-publish]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/npm-publish.yml/badge.svg
-[npm-publish-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/npm-publish.yml
 [npm]: https://img.shields.io/npm/v/rollup-plugin-glsl-optimize.svg
 [npm-url]: https://www.npmjs.com/package/rollup-plugin-glsl-optimize
 [node-version]: https://img.shields.io/node/v/rollup-plugin-glsl-optimize
 [types]: https://img.shields.io/npm/types/rollup-plugin-glsl-optimize
-[changelog]: https://img.shields.io/static/v1?label=SemVer&message=Changelog&style=flat&color=blue&logo=github
+[changelog]: https://img.shields.io/static/v1?label=changelog&message=SemVer&style=flat&color=blue
 [changelog-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/blob/master/CHANGES.md
 [dependencies]: https://img.shields.io/david/docd27/rollup-plugin-glsl-optimize.svg
 [dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize

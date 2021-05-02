@@ -31,14 +31,6 @@
   "engines": {
     "node": ">=14"
   },
-  "os": [
-    "win32",
-    "linux",
-    "darwin"
-  ],
-  "cpu": [
-    "x64"
-  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
