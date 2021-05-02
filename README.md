@@ -2,13 +2,11 @@
 [![NPM Package][npm]][npm-url]
 [![Changelog][changelog]][changelog-url]
 ![Node Version][node-version]
-![Types][types]
-
+![Types][types]\
 [![Maintainability][cc-maintainability]][cc-maintainability-url]
 [![Coverage Status][coverage]][coverage-url]
 [![Dependencies][dependencies]][dependencies-url]
-[![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
-
+[![Dev Dependencies][dev-dependencies]][dev-dependencies-url]\
 [![Node.js CI][ci]][ci-url]
 [![NPM Publish][npm-publish]][npm-publish-url]
 [![Tool Binaries][tool-binaries]][tool-binaries-url]
