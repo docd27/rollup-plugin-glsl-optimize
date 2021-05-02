@@ -2,7 +2,7 @@ import {EOL} from 'os';
 import * as path from 'path';
 import * as fsSync from 'fs';
 import {insertExtensionPreamble, fixupDirectives, insertPreamble} from './preamble.js';
-import {argQuote, configureTools, getCachePath, launchTool, waitForToolBuffered} from './tools.js';
+import {argQuote, configureTools, getCachePath, launchTool, printToolDiagnostic, waitForToolBuffered} from './tools.js';
 import {checkMakeFolder, rmDir} from './download.js';
 import {compressShader} from './minify.js';
 import * as crypto from 'crypto';
@@ -76,14 +76,6 @@ async function glslRunValidator(name, workingDir, stageName, input, params, extr
     ...params,
     ...extraParams,
   ]);
-}
-
-function printToolDiagnostic(lines) {
-  for (const line of lines) {
-    if (line.length && line !== 'stdin') {
-      console.error(line);
-    }
-  }
 }
 
 /**

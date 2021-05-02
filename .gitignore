@@ -5,6 +5,7 @@ node_modules/
 
 bin/
 build/
+build.txt
 typings-autogen/
 dist/
 coverage/

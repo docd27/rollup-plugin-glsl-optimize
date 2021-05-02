@@ -22,12 +22,17 @@ jobs:
         run: npm install
       - name: Build script
         run: node build.binaries.mjs
+      - name: Read build description
+        id: build_description
+        run: echo "::set-output name=DESCRIPTION::$(cat build.txt)"
       - name: Release
         uses: softprops/action-gh-release@v1
       #   if: startsWith(github.ref, 'refs/tags/')
         with:
           files: build/*
           name: Khronos binaries ${{ steps.get_version.outputs.VERSION }}
-          body: Khronos SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            Khronos SPIRV-Tools binaries ${{ steps.get_version.outputs.VERSION }}
+            ${{ steps.build_description.outputs.DESCRIPTION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

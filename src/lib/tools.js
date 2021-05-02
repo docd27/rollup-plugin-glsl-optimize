@@ -1,4 +1,4 @@
-import {platform, arch} from 'os';
+import {platform, arch, EOL} from 'os';
 import {spawn} from 'child_process';
 import * as path from 'path';
 import * as fsSync from 'fs';
@@ -99,11 +99,10 @@ let _platConfigured = false;
 
 /**
  * @internal
- * @return {BinarySource?}
+ * @return {string?}
  */
-export function configurePlatformBinaries() {
-  if (!_platConfigured) {
-    _platConfigured = true;
+export function getPlatTag() {
+  if (!_platTag) {
     if (arch() === 'x64') {
       switch (platform()) {
         case 'win32': _platTag = 'win64'; break;
@@ -111,6 +110,18 @@ export function configurePlatformBinaries() {
         case 'darwin': _platTag = 'macos64'; break;
       }
     }
+  }
+  return _platTag;
+}
+
+/**
+ * @internal
+ * @return {BinarySource?}
+ */
+export function configurePlatformBinaries() {
+  if (!_platConfigured) {
+    _platConfigured = true;
+    getPlatTag();
     if (_platTag) {
       (/** @type {[GLSLToolVals, string][]} */(Object.entries(ToolDistPaths[_platTag])))
         .forEach(([tool, file]) => ToolConfig[tool].distPath = `${_platTag}${path.sep}${file}`);
@@ -265,6 +276,14 @@ export async function waitForTool({toolProcess, exitPromise}, input = undefined)
   };
 }
 
+export function printToolDiagnostic(lines) {
+  for (const line of lines) {
+    if (line.length && line !== 'stdin') {
+      console.error(line);
+    }
+  }
+}
+
 /**
  * @internal
  * @param {string} path
@@ -280,6 +299,28 @@ export async function runTool(path, workingDir, title, args) {
     throw new Error(errMsg);
   }
   return toolResult;
+}
+
+/**
+ * @internal
+ * @param {string} path
+ * @param {string} workingDir
+ * @param {string} title
+ * @param {string[]} args
+ */
+ export async function runToolBuffered(path, workingDir, title, args) {
+  const toolResult = await waitForToolBuffered(launchToolPath(path, workingDir,args));
+  if (toolResult.error) {
+    printToolDiagnostic(toolResult.outLines);
+    printToolDiagnostic(toolResult.errLines);
+    const errMsg = `${title} failed: ${path} ${toolResult.exitMessage}`;
+    console.error(errMsg);
+    throw new Error(errMsg);
+  }
+  return {
+    out: toolResult.outLines ? toolResult.outLines.join(EOL) : '',
+    err: toolResult.errLines ? toolResult.errLines.join(EOL) : '',
+  };
 }
 
 const argEscapeWindows = (pattern) => {
