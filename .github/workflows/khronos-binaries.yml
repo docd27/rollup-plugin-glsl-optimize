@@ -24,7 +24,14 @@ jobs:
         run: node build.binaries.mjs
       - name: Read build description
         id: build_description
-        run: echo "::set-output name=DESCRIPTION::$(cat build.txt)"
+        run: |
+          content=`cat ./build.txt`
+          # handle multi-line content
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          # end of handle multi-line content
+          echo "::set-output name=DESCRIPTION::$content"
       - name: Release
         uses: softprops/action-gh-release@v1
       #   if: startsWith(github.ref, 'refs/tags/')
