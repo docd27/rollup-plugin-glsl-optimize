@@ -14,6 +14,7 @@
     "shader",
     "shaders",
     "optimize",
+    "optimizer",
     "vert",
     "frag",
     "spirv",
