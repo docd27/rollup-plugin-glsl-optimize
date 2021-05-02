@@ -1,19 +1,21 @@
 # rollup-plugin-glsl-optimize
 [![NPM Package][npm]][npm-url]
-[![Node.js CI][ci]][ci-url]
-[![NPM Publish][npm-publish]][npm-publish-url]
-[![Tool Binaries][tool-binaries]][tool-binaries-url]
+[![Changelog][changelog]][changelog-url]
+![Node Version][node-version]
+![Types][types]
 
 [![Maintainability][cc-maintainability]][cc-maintainability-url]
 [![Coverage Status][coverage]][coverage-url]
 [![Dependencies][dependencies]][dependencies-url]
 [![Dev Dependencies][dev-dependencies]][dev-dependencies-url]
 
+[![Node.js CI][ci]][ci-url]
+[![NPM Publish][npm-publish]][npm-publish-url]
+[![Tool Binaries][tool-binaries]][tool-binaries-url]
+
 Import GLSL source files as strings. Pre-processed, validated and optimized with [Khronos Group SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools).
 
 Primary use-case is processing WebGL2 / GLSL ES 300 shaders.
-
-*Plugin supports node >= 14.x*
 
 ```js
 import frag from './shaders/myShader.frag';
@@ -121,6 +123,9 @@ The following shader stages are supported by the Khronos tools and recognized by
 - ``extraValidatorParams``, ``extraOptimizerParams``, ``extraCrossParams`` : ``string[]`` (default undefined) Additional parameters for the Khronos Glslang Validator [here](doc/glslangValidator.md), the Khronos SPIR-V Optimizer [here](doc/spirv-opt.md), and the Khronos SPIR-V Cross compiler [here](doc/spirv-cross.md).
 - ``glslangValidatorPath``, ``glslangOptimizerPath``, ``glslangCrossPath`` : ``string`` (default undefined) Provide / override binary tool paths. Note the environment variables always take precedence if set.
 
+## Changelog
+Available in [CHANGES.md][changelog].
+
 ## License
 
 Released under the [MIT license](LICENSE).
@@ -139,6 +144,10 @@ Released under the [MIT license](LICENSE).
 [npm-publish-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/npm-publish.yml
 [npm]: https://img.shields.io/npm/v/rollup-plugin-glsl-optimize.svg
 [npm-url]: https://www.npmjs.com/package/rollup-plugin-glsl-optimize
+[node-version]: https://img.shields.io/node/v/rollup-plugin-glsl-optimize
+[types]: https://img.shields.io/npm/types/rollup-plugin-glsl-optimize
+[changelog]: https://img.shields.io/static/v1?label=SemVer&message=Changelog&style=flat&color=blue&logo=github
+[changelog-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/blob/master/CHANGES.md
 [dependencies]: https://img.shields.io/david/docd27/rollup-plugin-glsl-optimize.svg
 [dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize
 [dev-dependencies]: https://img.shields.io/david/dev/docd27/rollup-plugin-glsl-optimize.svg
