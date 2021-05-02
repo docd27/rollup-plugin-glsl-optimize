@@ -3,12 +3,29 @@ node_modules/
 .eslintcache
 .antlr
 
+# Build
 bin/
 build/
 build.txt
 typings-autogen/
-.github/
 coverage/
+
+# Dev env
+.github/
+.gitignore
+.npmignore
+.eslintrc.js
+jsconfig.json
+tsconfig.json
+
+# Build system
+build.binaries.config.mjs
+build.binaries.mjs
+rollup.config.bundletypes.mjs
+rollup.config.package.mjs
+
+# Tests
+test/
 
 # Logs
 logs
