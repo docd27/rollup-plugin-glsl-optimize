@@ -124,7 +124,7 @@ The following shader stages are supported by the Khronos tools and recognized by
 - ``glslangValidatorPath``, ``glslangOptimizerPath``, ``glslangCrossPath`` : ``string`` (default undefined) Provide / override binary tool paths. Note the environment variables always take precedence if set.
 
 ## Changelog
-Available in [CHANGES.md][changelog].
+Available in [CHANGES.md](CHANGES.md).
 
 ## License
 
