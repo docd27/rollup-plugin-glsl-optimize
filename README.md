@@ -139,7 +139,7 @@ Khronos tool binaries (built by the upstream projects) are distributed and insta
 [dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize
 [dev-dependencies]: https://status.david-dm.org/gh/docd27/rollup-plugin-glsl-optimize.svg?type=dev
 [dev-dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize?type=dev
-[cc-maintainability]: https://api.codeclimate.com/v1/badges/b1dfc39fd650dd54f730/maintainability
+[cc-maintainability]: https://badgen.net/codeclimate/maintainability/docd27/rollup-plugin-glsl-optimize
 [cc-maintainability-url]: https://codeclimate.com/github/docd27/rollup-plugin-glsl-optimize/maintainability
 [coverage]: https://badgen.net/coveralls/c/github/docd27/rollup-plugin-glsl-optimize/master
 [coverage-url]: https://coveralls.io/github/docd27/rollup-plugin-glsl-optimize?branch=master
