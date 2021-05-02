@@ -129,11 +129,11 @@ Khronos tool binaries (built by the upstream projects) are distributed and insta
 
 [ci]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml/badge.svg
 [ci-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml
-[npm]: https://img.shields.io/npm/v/rollup-plugin-glsl-optimize.svg
+[npm]: https://badgen.net/npm/v/rollup-plugin-glsl-optimize
 [npm-url]: https://www.npmjs.com/package/rollup-plugin-glsl-optimize
-[node-version]: https://img.shields.io/node/v/rollup-plugin-glsl-optimize
-[types]: https://img.shields.io/npm/types/rollup-plugin-glsl-optimize
-[changelog]: https://img.shields.io/static/v1?label=changelog&message=SemVer&style=flat&color=blue
+[node-version]: https://badgen.net/npm/node/rollup-plugin-glsl-optimize
+[types]: https://badgen.net/npm/types/rollup-plugin-glsl-optimize
+[changelog]: https://badgen.net/badge/changelog/SemVer/blue
 [changelog-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/blob/master/CHANGES.md
 [dependencies]: https://status.david-dm.org/gh/docd27/rollup-plugin-glsl-optimize.svg
 [dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize
@@ -141,5 +141,5 @@ Khronos tool binaries (built by the upstream projects) are distributed and insta
 [dev-dependencies-url]: https://david-dm.org/docd27/rollup-plugin-glsl-optimize?type=dev
 [cc-maintainability]: https://api.codeclimate.com/v1/badges/b1dfc39fd650dd54f730/maintainability
 [cc-maintainability-url]: https://codeclimate.com/github/docd27/rollup-plugin-glsl-optimize/maintainability
-[coverage]: https://img.shields.io/coveralls/github/docd27/rollup-plugin-glsl-optimize
+[coverage]: https://badgen.net/coveralls/c/github/docd27/rollup-plugin-glsl-optimize/master
 [coverage-url]: https://coveralls.io/github/docd27/rollup-plugin-glsl-optimize?branch=master
