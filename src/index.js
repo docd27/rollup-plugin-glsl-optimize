@@ -1,5 +1,5 @@
 import {createFilter} from '@rollup/pluginutils';
-import { glslProcessSource } from './lib/glslProcess.js';
+import {glslProcessSource} from './lib/glslProcess.js';
 import {dirname} from 'path';
 import * as fsSync from 'fs';
 
@@ -8,18 +8,18 @@ import * as fsSync from 'fs';
  * @typedef {{[P in GLSLStageName]: string[]}} GLSLStageDefs */
 /** @type {GLSLStageDefs} */
 const stageDefs = {
-  'vert': [ '.vs', '.vert', '.vs.glsl', '.vert.glsl' ],
-  'frag': [ '.fs', '.frag', '.fs.glsl', '.frag.glsl' ],
+  'vert': ['.vs', '.vert', '.vs.glsl', '.vert.glsl'],
+  'frag': ['.fs', '.frag', '.fs.glsl', '.frag.glsl'],
   // The following are untested:
-  'geom': [ '.geom', '.geom.glsl' ],
-  'comp': [ '.comp', '.comp.glsl' ],
-  'tesc': [ '.tesc', '.tesc.glsl' ],
-  'tese': [ '.tese', '.tese.glsl' ],
+  'geom': ['.geom', '.geom.glsl'],
+  'comp': ['.comp', '.comp.glsl'],
+  'tesc': ['.tesc', '.tesc.glsl'],
+  'tese': ['.tese', '.tese.glsl'],
 };
 
 const extsIncludeDefault = [...Object.values(stageDefs).flatMap(
-  (exts) => exts.map((ext) => `**/*${ext}`)),
-  '**/*.glsl',
+    (exts) => exts.map((ext) => `**/*${ext}`)),
+'**/*.glsl',
   // Additionally include all *.glsl by default so we throw an error
   // if the user includes a file extension without a stage
 ];
@@ -27,9 +27,9 @@ const extsIncludeDefault = [...Object.values(stageDefs).flatMap(
 /** @type {[GLSLStageName, RegExp][]} */
 const stageRegexes = (
   /** @type {[GLSLStageName, string[]][]} */(Object.entries(stageDefs))
-  .map(([st, exts]) => [st,
-    new RegExp(`(?:${exts.map(ext => ext.replace('.', '\\.')).join('|')})$`, 'i')
-  ]));
+      .map(([st, exts]) => [st,
+        new RegExp(`(?:${exts.map((ext) => ext.replace('.', '\\.')).join('|')})$`, 'i'),
+      ]));
 
 function generateCode(source) {
   return `export default ${JSON.stringify(source)}; // eslint-disable-line`;
@@ -83,7 +83,9 @@ export default function glslOptimize(userOptions = {}) {
           if (glslify && glslify.compile && typeof glslify.compile === 'function') {
             glslifyCompile = glslify.compile;
           }
-        } catch {}
+        } catch {
+          // do nothing
+        }
       }
       return options;
     },
@@ -107,22 +109,22 @@ export default function glslOptimize(userOptions = {}) {
       /** @type {GLSLStageName} */
       const stage = stageRegexes.find(([, regex]) => id.match(regex))?.[0];
       if (!stage) {
-        this.error({ message: `File '${id}' : extension did not match a shader stage.` });
+        this.error({message: `File '${id}' : extension did not match a shader stage.`});
       }
 
       if (pluginOptions.glslify) {
         if (!glslifyCompile) {
-          this.error({ message: `glslify could not be found. Install it with npm i -D glslify`});
+          this.error({message: `glslify could not be found. Install it with npm i -D glslify`});
         }
         /** @type {GlslifyOptions} */
         const glslifyOptions = {
           basedir: dirname(id),
           ...pluginOptions.glslifyOptions,
-        }
+        };
         try {
           source = glslifyCompile(source, glslifyOptions);
         } catch (err) {
-          this.error({ message: `Error processing GLSL source with glslify:\n${err.message}` });
+          this.error({message: `Error processing GLSL source with glslify:\n${err.message}`});
         }
       }
 
@@ -131,7 +133,7 @@ export default function glslOptimize(userOptions = {}) {
         result.code = generateCode(result.code);
         return result;
       } catch (err) {
-        this.error({ message: `Error processing GLSL source:\n${err.message}` });
+        this.error({message: `Error processing GLSL source:\n${err.message}`});
       }
     },
   };

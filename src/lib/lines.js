@@ -1,10 +1,9 @@
 import {TextDecoder} from 'util';
 import {once} from 'events';
-import * as stream from 'stream';
 
 /**
  * @internal
- * @param {stream.Writable} outputStream
+ * @param {import('stream').Writable} outputStream
  */
 export function chunkWriterAsync(outputStream) {
   outputStream.setDefaultEncoding('utf8');
@@ -27,7 +26,7 @@ export function chunkWriterAsync(outputStream) {
 
 /**
  * @internal
- * @param {stream.Writable} stream
+ * @param {import('stream').Writable} stream
  * @param {string} lines
  */
 export async function writeLines(stream, lines) {
@@ -39,7 +38,7 @@ export async function writeLines(stream, lines) {
 
 /**
  * @internal
- * @param {stream.Readable} stream
+ * @param {import('stream').Readable} stream
  */
 export async function* parseLines(stream) {
   stream.addListener('error', (err) => {
@@ -48,9 +47,7 @@ export async function* parseLines(stream) {
   const utf8Decoder = new TextDecoder('utf-8');
   let outputBuffer = Buffer.from([]);
   let outputBufferPos = 0;
-  let chunkCount = 0;
   for await (const chunk of stream) {
-    chunkCount++;
     outputBuffer = outputBuffer.length > 0 ? Buffer.concat([outputBuffer, chunk]) : chunk;
     while (outputBufferPos < outputBuffer.length) {
       if (outputBuffer[outputBufferPos] === 0xA) { // newline

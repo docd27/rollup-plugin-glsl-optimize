@@ -56,7 +56,7 @@ export const TOKENNAMES = Object.freeze({1: 'EOL', 2: 'EOF', 3: 'Line', 4: 'Comm
  */
 function* lexer(input) {
   let skipOne = false;
-  let c = -1, line = 1, col = 0, lineStart = 0;
+  let line = 1, col = 0;
   let afterLineContinuation = false, inCommentSingleLine = false, inCommentMultiLine = false;
   /** @type {LexerToken} */
   let curToken = undefined;
@@ -108,7 +108,7 @@ function* lexer(input) {
   };
 
   for (const [cur, next] of iterateStringLookahead(input)) {
-    c++; col++;
+    col++;
     if (skipOne) {
       skipOne = false;
       continue;

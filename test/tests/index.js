@@ -12,7 +12,7 @@ import {settings} from '../../settings.js';
  * @param  {...any} args
  */
 export function log(...args) {
-  const res = args.map(v => typeof v === 'string' ? v : util.inspect(v, false, null)).join(' ');
+  const res = args.map((v) => typeof v === 'string' ? v : util.inspect(v, false, null)).join(' ');
   process.stdout.write(`${res}\n`);
 }
 

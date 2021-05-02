@@ -13,20 +13,20 @@ export function shaderTests(glslOptimize) {
     });
     it('should preserve all exports when just preprocessing', async function() {
       const bundle = await rollup({
-          input: 'test/fixtures/basic.js',
-          plugins: [glslOptimize({ optimize: false })],
+        input: 'test/fixtures/basic.js',
+        plugins: [glslOptimize({optimize: false})],
       });
-      const generated = await bundle.generate({ format: 'es' });
+      const generated = await bundle.generate({format: 'es'});
       const code = generated.output[0].code;
       assert.include(code, 'keepMe');
       assert.include(code, 'optimizeMeOut');
     });
     it('should optimize out unused exports', async function() {
       const bundle = await rollup({
-          input: 'test/fixtures/basic.js',
-          plugins: [glslOptimize({ optimize: true })],
+        input: 'test/fixtures/basic.js',
+        plugins: [glslOptimize({optimize: true})],
       });
-      const generated = await bundle.generate({ format: 'es' });
+      const generated = await bundle.generate({format: 'es'});
       const code = generated.output[0].code;
       assert.include(code, 'keepMe');
       assert.notInclude(code, 'optimizeMeOut');

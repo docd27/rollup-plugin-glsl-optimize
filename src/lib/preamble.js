@@ -1,5 +1,5 @@
 
-import {formatParseError, simpleParse, TOK, TOKENNAMES} from './parse.js';
+import {formatParseError, simpleParse, TOK} from './parse.js';
 
 const GLSL_INCLUDE_EXT = 'GL_GOOGLE_include_directive';
 const GLSL_LINE_EXT = 'GL_GOOGLE_cpp_style_line_directive';
@@ -30,10 +30,10 @@ export function insertExtensionPreamble(code, filePath, versionReplacer = (v) =>
   })()];
 
   return insertPreambleTokens(tokens,
-    (fixupLineNo) => ({col: 0, line: fixupLineNo, type: TOK.Directive, value: '', text:
-  `#extension ${GLSL_INCLUDE_EXT} : require${
-    extraPreamble ? `\n${extraPreamble}` : ''}\n#line ${fixupLineNo} "${filePath}"\n`}),
-    versionReplacer);
+      (fixupLineNo) => ({col: 0, line: fixupLineNo, type: TOK.Directive, value: '', text:
+      `#extension ${GLSL_INCLUDE_EXT} : require${
+      extraPreamble ? `\n${extraPreamble}` : ''}\n#line ${fixupLineNo} "${filePath}"\n`}),
+      versionReplacer);
 }
 
 
@@ -48,7 +48,7 @@ export function insertExtensionPreamble(code, filePath, versionReplacer = (v) =>
  * @return {string}
  */
 export function fixupDirectives(code, preserve = false, required = true, searchLineDirective = false,
-  stripLineDirectives = false, versionReplacer = (v) => v) {
+    stripLineDirectives = false, versionReplacer = (v) => v) {
   const STRIP_EXT = searchLineDirective ? GLSL_LINE_EXT : GLSL_INCLUDE_EXT;
   return [...(function* () {
     let found = false;
@@ -79,11 +79,12 @@ export function fixupDirectives(code, preserve = false, required = true, searchL
             }
           }
           break;
-        case TOK.Version:
+        case TOK.Version: {
           const newVersion = versionReplacer(token.Version);
           token.Version = newVersion;
           token.text = `#version ${newVersion}`;
           break;
+        }
         case TOK.LineNo:
           if (stripLineDirectives && token.type === TOK.LineNo) {
             skipNextEOL = true;
@@ -168,6 +169,6 @@ function insertPreambleTokens(tokens, preambleToken, versionReplacer = (v) => v)
  */
 export function insertPreamble(code, preamble) {
   return insertPreambleTokens(simpleParse(code),
-  (fixupLineNo) => ({col: 0, line: fixupLineNo, type: TOK.Comment, value: '', text:
-  `${preamble}\n`}));
+      (fixupLineNo) => ({col: 0, line: fixupLineNo, type: TOK.Comment, value: '', text:
+      `${preamble}\n`}));
 }

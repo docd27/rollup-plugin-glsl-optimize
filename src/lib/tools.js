@@ -85,7 +85,7 @@ const ToolDistPaths = {
     Optimizer: `spirv-opt`,
     Cross: `spirv-cross`,
   },
-}
+};
 /**
  * @typedef {Object} BinarySource
  * @property {string} folderPath
@@ -124,7 +124,7 @@ export function configurePlatformBinaries() {
     getPlatTag();
     if (_platTag) {
       (/** @type {[GLSLToolVals, string][]} */(Object.entries(ToolDistPaths[_platTag])))
-        .forEach(([tool, file]) => ToolConfig[tool].distPath = `${_platTag}${path.sep}${file}`);
+          .forEach(([tool, file]) => ToolConfig[tool].distPath = `${_platTag}${path.sep}${file}`);
     }
   }
   return _platTag ? {
@@ -147,7 +147,8 @@ function errorMissingTools(kinds) {
   throw new Error(errMsg);
 }
 /** @param {GLSLSingleToolConfig} config */
-const toolInfo = (config) => `${config.name} : configure with the environment variable ${config.envKey} (or the option ${config.optionKey})\n${config.url}\n`;
+const toolInfo = (config) => `${config.name} : configure with the environment variable ${
+  config.envKey} (or the option ${config.optionKey})\n${config.url}\n`;
 
 /** @internal */
 export const allToolInfo = () => Object.values(ToolConfig).map(toolInfo).join('\n');
@@ -292,7 +293,7 @@ export function printToolDiagnostic(lines) {
  * @param {string[]} args
  */
 export async function runTool(path, workingDir, title, args) {
-  const toolResult = await waitForTool(launchToolPath(path, workingDir,args));
+  const toolResult = await waitForTool(launchToolPath(path, workingDir, args));
   if (toolResult.error) {
     const errMsg = `${title} failed: ${path} ${toolResult.exitMessage}`;
     console.error(errMsg);
@@ -308,8 +309,8 @@ export async function runTool(path, workingDir, title, args) {
  * @param {string} title
  * @param {string[]} args
  */
- export async function runToolBuffered(path, workingDir, title, args) {
-  const toolResult = await waitForToolBuffered(launchToolPath(path, workingDir,args));
+export async function runToolBuffered(path, workingDir, title, args) {
+  const toolResult = await waitForToolBuffered(launchToolPath(path, workingDir, args));
   if (toolResult.error) {
     printToolDiagnostic(toolResult.outLines);
     printToolDiagnostic(toolResult.errLines);

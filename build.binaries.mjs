@@ -98,7 +98,7 @@ const runBuildFetchStep = async (buildStep, targetDir) => {
 async function jsonRequest(url) {
   try {
     const response = await fetch(url, {
-      method: 'GET'
+      method: 'GET',
     });
     if (!response.ok) throw new Error(`Bad response code: ${response.status}`);
     return response.json();
@@ -119,9 +119,9 @@ async function fetchMatchingGithubRelease(repo, releaseMatchers) {
   }
   let foundReleaseInfo;
   for (const releaseInfo of releaseInfos) {
-    if (releaseInfo.draft // Skip draft releases
-      || !releaseInfo.html_url || !releaseInfo.created_at || !releaseInfo.target_commitish // Missing info
-      || !releaseInfo.assets || !releaseInfo.assets.length // No assets
+    if (releaseInfo.draft || // Skip draft releases
+      !releaseInfo.html_url || !releaseInfo.created_at || !releaseInfo.target_commitish || // Missing info
+      !releaseInfo.assets || !releaseInfo.assets.length // No assets
     ) continue;
 
     const matchAssets = new Set(releaseInfo.assets);
@@ -146,9 +146,10 @@ async function fetchMatchingGithubRelease(repo, releaseMatchers) {
         url: releaseInfo.html_url,
         hash: releaseInfo.target_commitish,
         date: releaseInfo.created_at,
-        tag: new Date(releaseInfo.created_at).toISOString().split('T')[0] + '-' + releaseInfo.target_commitish.slice(0, 7),
+        tag: new Date(releaseInfo.created_at).toISOString().split('T')[0] +
+            '-' + releaseInfo.target_commitish.slice(0, 7),
         platforms: matchedPlats,
-      }
+      };
       break;
     } else {
       // We could continue searching down releases, but better to throw an error in case
@@ -170,7 +171,7 @@ async function fetchSpirvToolsCIPage(url) {
   let resultHTML;
   try {
     const response = await fetch(url, {
-      method: 'GET'
+      method: 'GET',
     });
     if (!response.ok) throw new Error(`Bad response code: ${response.status}`);
     resultHTML = await response.text();
@@ -221,7 +222,9 @@ async function fetchMatchingSpirvToolsCI(urls, releaseMatchers) {
   if (!thisPlat) throw new Error(`Couldn't identify this platform's tag`);
 
   const buildConfig = /** @type {BuildConfig} */((await import('./build.binaries.config.mjs')).default);
-  if (!buildConfig || !buildConfig.targets || !buildConfig.sources || !buildConfig.include) throw new Error(`Bad build config`);
+  if (!buildConfig || !buildConfig.targets || !buildConfig.sources || !buildConfig.include) {
+    throw new Error(`Bad build config`);
+  }
 
   rmFile(buildInfoFile);
   rmDir(buildFolder);
@@ -234,16 +237,17 @@ async function fetchMatchingSpirvToolsCI(urls, releaseMatchers) {
     switch (source.type) {
       case 'githubrelease':
         sourceResult = await fetchMatchingGithubRelease(source.repo, source.matchers);
-      break;
+        break;
       case 'spirvtoolsci':
         sourceResult = await fetchMatchingSpirvToolsCI(source.urls, source.matchers);
-      break;
+        break;
       default: throw new Error(`build config error: Unknown type '${source.type}' for source '${source.name}'`);
     }
     for (const target of buildConfig.targets) {
       if (!sourceResult.platforms[target]) throw new Error(`source '${source.name}' missing target '${target}'`);
     }
-    sources.push({...sourceResult, name: source.name, filelist: source.filelist, verargs: source.verargs, vermatch: source.vermatch});
+    sources.push({...sourceResult, name: source.name, filelist: source.filelist,
+      verargs: source.verargs, vermatch: source.vermatch});
   }
 
   const includeFiles = [];
@@ -265,7 +269,7 @@ async function fetchMatchingSpirvToolsCI(urls, releaseMatchers) {
 
     for (const source of sources) {
       const url = source.platforms[target].url;
-      const extMatch = url.match(/\.(tar\.gz|tgz|zip)$/i) || ['',''];
+      const extMatch = url.match(/\.(tar\.gz|tgz|zip)$/i) || ['', ''];
       let action;
       switch (extMatch[1].toLowerCase()) {
         case 'tar.gz': case 'tgz': action = 'untargz'; break;

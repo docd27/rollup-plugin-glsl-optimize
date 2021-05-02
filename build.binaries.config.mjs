@@ -16,7 +16,7 @@ export default {
         win64: ['bin/glslangValidator.exe'],
         ubuntu64: ['bin/glslangValidator'],
         macos64: ['bin/glslangValidator'],
-      }
+      },
     },
     {
       name: 'spirv-opt',
@@ -29,15 +29,15 @@ export default {
         macos64: 'https://storage.googleapis.com/spirv-tools/badges/build_link_macos_clang_release.html',
       },
       matchers: {
-        win64: /windows.*\/([^-\/]+)-[^\/]+\/([^\/]+)$/i,
-        ubuntu64: /linux.*\/([^-\/]+)-[^\/]+\/([^\/]+)$/i,
-        macos64: /macos.*\/([^-\/]+)-[^\/]+\/([^\/]+)$/i,
+        win64: /windows.*\/([^-/]+)-[^/]+\/([^/]+)$/i,
+        ubuntu64: /linux.*\/([^-/]+)-[^/]+\/([^/]+)$/i,
+        macos64: /macos.*\/([^-/]+)-[^/]+\/([^/]+)$/i,
       },
       filelist: {
         win64: ['install/bin/spirv-opt.exe'],
         ubuntu64: ['install/bin/spirv-opt'],
         macos64: ['install/bin/spirv-opt'],
-      }
+      },
     },
     {
       name: 'spirv-cross',
@@ -62,22 +62,22 @@ export default {
       name: 'glslangValidator LICENSE',
       url: 'https://raw.githubusercontent.com/KhronosGroup/glslang/master/LICENSE.txt',
       fileList: [
-        'glslangValidator-LICENSE'
-      ]
+        'glslangValidator-LICENSE',
+      ],
     },
     {
       name: 'spirv-opt LICENSE',
       url: 'https://raw.githubusercontent.com/KhronosGroup/SPIRV-Tools/master/LICENSE',
       fileList: [
-        'spirv-opt-LICENSE'
-      ]
+        'spirv-opt-LICENSE',
+      ],
     },
     {
       name: 'spirv-cross LICENSE',
       url: 'https://raw.githubusercontent.com/KhronosGroup/SPIRV-Cross/master/LICENSE',
       fileList: [
-        'spirv-cross-LICENSE'
-      ]
-    }
+        'spirv-cross-LICENSE',
+      ],
+    },
   ],
 };

@@ -200,7 +200,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
         targetGlslVersion = +versionParts[1];
       }
       if (targetGlslVersion < 300) {
-        throw new Error(`Only GLSL ES shaders version 300 (WebGL2) or higher can be optimized`)
+        throw new Error(`Only GLSL ES shaders version 300 (WebGL2) or higher can be optimized`);
       }
       // SPIR-V compilation requires >= 310 es
       // and we run the optimizer under OpenGL 4.0 (GLSL 400) semantics
@@ -222,7 +222,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
   let processedGLSL;
 
   if (options.optimize) {
-    const outputBuild = await glslRunValidator('Build spirv', targetDir, stageName,
+    await glslRunValidator('Build spirv', targetDir, stageName,
         code, [
           '-G', // opengl
           '-g', // debug info (required for cross --emit-line-directives)
@@ -238,7 +238,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
       throw new Error(`Build spirv failed: no output file`);
     }
     if (!options.optimizerDebugSkipOptimizer) {
-      const outputOptimize = await glslRunOptimizer('Optimize spirv', targetDir,
+      await glslRunOptimizer('Optimize spirv', targetDir,
           outputFileAbs, optimizedFileAbs, undefined, options.optimizerPreserveUnusedBindings, [
             // '--print-all', // Print spirv for debugging
           ], options.extraOptimizerParams);
@@ -265,14 +265,14 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
     processedGLSL = await glslRunValidator('Preprocessing', targetDir, stageName, code, [
       '-E', // print pre-processed GLSL
     ], extraValidatorParams);
-    const outputValidated = await glslRunValidator('Validation', targetDir, stageName,
-      processedGLSL, [], extraValidatorParams);
+    await glslRunValidator('Validation', targetDir, stageName,
+        processedGLSL, [], extraValidatorParams);
   }
 
   processedGLSL = fixupDirectives(processedGLSL,
-    options.emitLineDirectives && !options.suppressLineExtensionDirective,
-    didInsertion && (!options.optimize || options.emitLineDirectives),
-    options.optimize, !options.emitLineDirectives, undefined);
+      options.emitLineDirectives && !options.suppressLineExtensionDirective,
+      didInsertion && (!options.optimize || options.emitLineDirectives),
+      options.optimize, !options.emitLineDirectives, undefined);
 
 
   const outputCode = options.compress ? compressShader(processedGLSL) : processedGLSL;
@@ -285,11 +285,11 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
 
   if (options.sourceMap) {
     const sourceMapSource = insertPreamble(processedGLSL,
-      '/*\n' +
-      `* Preprocessed${options.optimize?' + Optimized':''} from '${targetID}'\n` +
-      (options.compress ? '* [Embedded string is compressed]\n':'') +
-      '*/'
-      ).code;
+        '/*\n' +
+        `* Preprocessed${options.optimize?' + Optimized':''} from '${targetID}'\n` +
+        (options.compress ? '* [Embedded string is compressed]\n':'') +
+        '*/',
+    ).code;
     const magicString = new MagicString(sourceMapSource);
     result.map = magicString.generateMap({
       source: id,
