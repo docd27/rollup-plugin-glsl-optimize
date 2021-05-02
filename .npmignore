@@ -2,6 +2,9 @@ node_modules/
 .npm
 .eslintcache
 .antlr
+.github/
+.gitignore
+.npmignore
 
 # Build
 bin/
@@ -10,22 +13,23 @@ build.txt
 typings-autogen/
 coverage/
 
+# The following is commented out because
+# apparently optimizing the npm package
+# actually *lowers* npm's quality score :(
+
 # Dev env
-.github/
-.gitignore
-.npmignore
-.eslintrc.js
-jsconfig.json
-tsconfig.json
+# .eslintrc.js
+# jsconfig.json
+# tsconfig.json
 
 # Build system
-build.binaries.config.mjs
-build.binaries.mjs
-rollup.config.bundletypes.mjs
-rollup.config.package.mjs
+# build.binaries.config.mjs
+# build.binaries.mjs
+# rollup.config.bundletypes.mjs
+# rollup.config.package.mjs
 
 # Tests
-test/
+# test/
 
 # Logs
 logs
