@@ -141,10 +141,10 @@ function getBuildDir(id) {
  * @param {string} source Source code
  * @param {GLSLStageName} stageName
  * @param {Partial<GLSLToolOptions>} [glslOptions]
- * @param {(message: string) => void} [errorLog]
+ * @param {(message: string) => void} [warnLog]
  * @return {Promise<import('rollup').SourceDescription>}
  */
-export async function glslProcessSource(id, source, stageName, glslOptions = {}, errorLog = console.error) {
+export async function glslProcessSource(id, source, stageName, glslOptions = {}, warnLog = console.error) {
 
   /** @type {GLSLToolOptions} */
   const options = {
@@ -180,7 +180,7 @@ export async function glslProcessSource(id, source, stageName, glslOptions = {},
   let outputFile = targetID;
 
   if (!fsSync.existsSync(targetDir)) {
-    errorLog(`Error resolving path: '${id}' : Khronos glslangValidator may fail to find includes`);
+    warnLog(`Error resolving path: '${id}' : Khronos glslangValidator may fail to find includes`);
     targetDir = process.cwd();
     targetID = id;
     outputFile = `temp`;

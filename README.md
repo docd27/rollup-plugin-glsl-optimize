@@ -123,7 +123,7 @@ Available in [CHANGES.md](CHANGES.md).
 ## License
 
 Released under the [MIT license](LICENSE).\
-*Thanks to Vincent Wochnik ([rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)) for the whitespace minification code.*
+*Strip whitespace function adapted from code by Vincent Wochnik ([rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)).*
 
 Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files in the ``bin`` folder.
 

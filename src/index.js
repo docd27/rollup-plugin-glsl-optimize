@@ -1,6 +1,6 @@
 import {createFilter} from '@rollup/pluginutils';
 import {glslProcessSource} from './lib/glslProcess.js';
-import {dirname} from 'path';
+import {glslifyInit, glslifyProcessSource} from './lib/glslify.js';
 import * as fsSync from 'fs';
 
 /**
@@ -44,14 +44,9 @@ function generateCode(source) {
  *   File extensions within rollup to exclude.
  * @property {boolean} glslify
  *   Process sources using glslify prior to all preprocessing, validation and optimization.
- * @property {Partial<GlslifyOptions>} glslifyOptions
+ * @property {Partial<import('./lib/glslify.js').GlslifyOptions>} glslifyOptions
  *   When glslify enabled, pass these additional options to glslify.compile()
- * @typedef {GLSLPluginGlobalOptions & Partial<import('./lib/glslProcess').GLSLToolOptions>} GLSLPluginOptions
- */
-/**
- * @typedef {Object} GlslifyBaseOptions
- * @property {string} basedir
- * @typedef {{[key: string]: any} & GlslifyBaseOptions} GlslifyOptions
+ * @typedef {GLSLPluginGlobalOptions & Partial<import('./lib/glslProcess.js').GLSLToolOptions>} GLSLPluginOptions
  */
 /**
  * @param {Partial<GLSLPluginOptions>} userOptions
@@ -69,35 +64,23 @@ export default function glslOptimize(userOptions = {}) {
 
   const filter = createFilter(pluginOptions.include, pluginOptions.exclude);
 
-  /** @type {{(src:string, opts:GlslifyOptions):string}} */
-  let glslifyCompile;
-
   return {
     name: 'glsl-optimize',
 
     async options(options) {
       if (pluginOptions.glslify) { // Try to dynamically load glslify if installed
-        try {
-          // @ts-ignore
-          const glslify = await import('glslify');
-          if (glslify && glslify.compile && typeof glslify.compile === 'function') {
-            glslifyCompile = glslify.compile;
-          }
-        } catch {
-          // do nothing
-        }
+        await glslifyInit();
       }
       return options;
     },
 
+    /*
+      We use a load hook instead of transform because we want sourcemaps
+      to reflect the optimized shader source.
+    */
     async load(id) {
-      if (!id || !filter(id)) return;
+      if (!id || !filter(id) || !fsSync.existsSync(id)) return;
 
-      /*
-        We use a load hook instead of transform because we want sourcemaps
-        to reflect the optimized shader source.
-      */
-      if (!fsSync.existsSync(id)) return;
       let source;
       try {
         source = fsSync.readFileSync(id, {encoding: 'utf8'});
@@ -113,16 +96,9 @@ export default function glslOptimize(userOptions = {}) {
       }
 
       if (pluginOptions.glslify) {
-        if (!glslifyCompile) {
-          this.error({message: `glslify could not be found. Install it with npm i -D glslify`});
-        }
-        /** @type {GlslifyOptions} */
-        const glslifyOptions = {
-          basedir: dirname(id),
-          ...pluginOptions.glslifyOptions,
-        };
         try {
-          source = glslifyCompile(source, glslifyOptions);
+          source = await glslifyProcessSource(id, source, pluginOptions.glslifyOptions,
+              (message) => this.error({message}));
         } catch (err) {
           this.error({message: `Error processing GLSL source with glslify:\n${err.message}`});
         }

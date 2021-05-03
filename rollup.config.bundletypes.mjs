@@ -29,14 +29,14 @@ function earlyDel(targets = [], deleteOptions = {}) {
   };
 }
 
-function appendDts (filePath) {
+function appendDts(filePath) {
   const fileContent = fsSync.readFileSync(filePath, {encoding: 'utf8'});
   return {
     name: 'append-dts',
-    renderChunk (code) {
+    renderChunk(code) {
       return `${code}\n${fileContent}`;
-    }
-  }
+    },
+  };
 }
 
 export default [{
@@ -51,5 +51,5 @@ export default [{
     // appendDts('src/resources.d.ts'),
     del({hook: 'buildEnd', targets: [IN_DIR]}),
   ],
-  external: [ 'child_process' ],
+  external: ['child_process'],
 }];
