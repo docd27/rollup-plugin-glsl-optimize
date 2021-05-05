@@ -1,13 +1,12 @@
 import * as fsSync from 'fs';
+import {URL} from 'url';
 import {default as createHttpsProxyAgent} from 'https-proxy-agent';
 import {default as TFileCache} from '@derhuerst/http-basic/lib/FileCache.js';
-import * as querystring from 'querystring';
 import {default as request} from '@derhuerst/http-basic';
 import {default as ProgressBar} from 'progress';
 import {default as AdmZip} from 'adm-zip';
-
-import {URL} from 'url';
 import {argQuote, getCachePath, runTool} from './tools.js';
+import { URLSearchParams } from 'node:url';
 
 /**
  * @typedef {import('@derhuerst/http-basic/lib/FileCache.js').default} FileCacheInst
@@ -27,13 +26,18 @@ const requestAsync = (method, url, options = null) => new Promise((resolve, reje
     else resolve(response);
   }));
 
-const normalizeS3Url = (url) => {
-  url = new URL(url);
-  if (url.hostname.slice(-17) !== '.s3.amazonaws.com') return url.href;
-  const query = Array.from(url.searchParams.entries())
-      .filter(([key]) => key.slice(0, 6).toLowerCase() !== 'x-amz-')
-      .reduce((query, [key, val]) => ({...query, [key]: val}), {});
-  url.search = querystring.stringify(query);
+/**
+ * Returns normalized URL with X-Amz params stripped and application/x-www-form-urlencoded format
+ * (spaces %20 are encoded as +)
+ * @param {string} inUrl
+ * @return {string}
+ */
+export const normalizeGithubReleaseURL = (inUrl) => {
+  const url = new URL(inUrl), hostname = url.hostname.toLowerCase();
+  if (hostname === 'github-releases.githubusercontent.com' || hostname.endsWith('.s3.amazonaws.com')) {
+    url.search = new URLSearchParams([...url.searchParams]
+        .filter(([key]) => !key.toLowerCase().startsWith('x-amz-'))).toString();
+  }
   return url.href;
 };
 
@@ -54,7 +58,7 @@ function initHTTP() {
   }
   httpHelpers.cache = new FileCache(getCachePath());
   httpHelpers.cache.getCacheKey = (url) => {
-    return FileCache.prototype.getCacheKey(normalizeS3Url(url));
+    return FileCache.prototype.getCacheKey(normalizeGithubReleaseURL(url));
   };
 }
 

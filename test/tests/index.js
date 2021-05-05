@@ -3,6 +3,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import {installTests} from './install.js';
+import {utilTests} from './util.js';
 import {glslifyTests} from './glslify.js';
 import {shaderTests} from './shader.js';
 import {settings} from '../../settings.js';
@@ -22,6 +23,7 @@ export function runTests(glslOptimize) {
   chai.use(chaiAsPromised);
 
   installTests();
+  utilTests();
   shaderTests(glslOptimize);
   glslifyTests(glslOptimize);
 }

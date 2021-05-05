@@ -22,7 +22,7 @@ export function glslifyTests(glslOptimize) {
     this.timeout(30000);
     before('uninstall glslify', glslifyUninstall);
     it('should not have glslify available when uninstalled', async function() {
-      assert.isRejected(rollup({
+      await assert.isRejected(rollup({
         input: 'test/fixtures/basic.js',
         plugins: [glslOptimize({optimize: false, glslify: true})],
       }), /glslify could not be found/);
