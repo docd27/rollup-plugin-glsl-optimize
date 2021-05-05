@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## 1.0.0 2021-05-05
+* Stable Release
+* Bug fixes
+
 ## 0.0.11 2021-05-02
 * Improved Khronos binaries distribution
 * Better error handling for stage-less *.glsl files

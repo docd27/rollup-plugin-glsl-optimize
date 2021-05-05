@@ -1,12 +1,11 @@
 import * as fsSync from 'fs';
-import {URL} from 'url';
+import {URL, URLSearchParams} from 'url';
 import {default as createHttpsProxyAgent} from 'https-proxy-agent';
 import {default as TFileCache} from '@derhuerst/http-basic/lib/FileCache.js';
 import {default as request} from '@derhuerst/http-basic';
 import {default as ProgressBar} from 'progress';
 import {default as AdmZip} from 'adm-zip';
 import {argQuote, getCachePath, runTool} from './tools.js';
-import { URLSearchParams } from 'node:url';
 
 /**
  * @typedef {import('@derhuerst/http-basic/lib/FileCache.js').default} FileCacheInst
