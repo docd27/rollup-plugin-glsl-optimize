@@ -1,6 +1,6 @@
 {
   "name": "rollup-plugin-glsl-optimize",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Import GLSL source files as strings. Pre-processed, validated and optimized with Khronos Group SPIRV-Tools. Supports glslify.",
   "homepage": "https://github.com/docd27/rollup-plugin-glsl-optimize#readme",
   "keywords": [

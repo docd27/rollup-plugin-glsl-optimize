@@ -281,16 +281,14 @@ function* parser(input) {
   }
 }
 
+const warnParse = (message, token) => console.error(`Warning: ${formatParseError(message, token)}`);
 
-const warnParse = (message, token) => console.error(formatParseError(message, token));
-
-/* c8 ignore start */
 /**
  * @internal
  * @param {string} message
  * @param {LexerToken} token
  */
-export const formatParseError = (message, token) => `Warning: ${message}\nLine ${
+export const formatParseError = (message, token) => `${message}\nLine ${
   token.line} col ${token.col}:\n${formatLine(token.text)}`;
 
 const formatLine = (line) => {
@@ -326,11 +324,9 @@ const printToken = (t) => {
       restKV.length ? ` | ${restKV.map(([k, v]) => `${k} : '${v}'`).join(' | ')}`: ''}`;
 };
 
-/** @internal */
-export function parseDump(input) {
-  for (const token of simpleParse(input)) {
-    console.log(printToken(token));
-  }
-}
-
-/* c8 ignore stop */
+export const test = {
+  iterateStringLookahead,
+  lexer,
+  parser,
+  printToken,
+};

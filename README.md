@@ -110,22 +110,23 @@ The following shader stages are supported by the Khronos tools and recognized by
 - ``optimizerDebugSkipOptimizer`` : ``boolean`` (default false) When ``optimize`` enabled, skip the SPIR-V optimizer - compiles to SPIR-V then cross-compiles back to GLSL immediately.
 - ``suppressLineExtensionDirective`` : ``boolean`` (default false) When `emitLineDirectives` enabled, suppress the ``GL_GOOGLE_cpp_style_line_directive`` directive.
 - ``extraValidatorParams``, ``extraOptimizerParams``, ``extraCrossParams`` : ``string[]`` (default undefined) Additional parameters for the Khronos Glslang Validator [here](doc/glslangValidator.md), the Khronos SPIR-V Optimizer [here](doc/spirv-opt.md), and the Khronos SPIR-V Cross compiler [here](doc/spirv-cross.md).
-- ``glslangValidatorPath``, ``glslangOptimizerPath``, ``glslangCrossPath`` : ``string`` (default undefined) Provide / override binary tool paths. Note the environment variables always take precedence if set.
+- ``glslangValidatorPath``, ``glslangOptimizerPath``, ``glslangCrossPath`` : ``string`` (default undefined) Provide / override binary tool paths.\
+*It's recommended to instead use the environment variables ``GLSLANG_VALIDATOR``, ``GLSLANG_OPTIMIZER``, ``GLSLANG_CROSS`` where needed. They always take precedence if set.*
 
 ## Changelog
 Available in [CHANGES.md](CHANGES.md).
 
 #### Caveats & Known Issues
-* This plugin handles glsl and glsify by itself. Use with conflicting plugins (e.g. rollup-plugin-glsl, rollup-plugin-glslify) will cause unpredictable results.
+* This plugin handles glsl and glslify by itself. Use with conflicting plugins (e.g. rollup-plugin-glsl, rollup-plugin-glslify) will cause unpredictable results.
 * Optimizer: ``lowp`` precision qualifier - emitted as ``mediump``\
-  *SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations now treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
+  *SPIR-V has a single ``RelaxedPrecision`` decoration for 16-32bit precision. However most implementations actually treat ``mediump`` and ``lowp`` equivalently, hence the lack of need for it in SPIR-V.*
 
 ## License
 
 Released under the [MIT license](LICENSE).\
 *Strip whitespace function adapted from code by Vincent Wochnik ([rollup-plugin-glsl](https://github.com/vwochnik/rollup-plugin-glsl)).*
 
-Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files in the ``bin`` folder.
+Khronos tool binaries (built by the upstream projects) are distributed and installed with this plugin under the terms of the Apache License Version 2.0. See the corresponding LICENSE files installed in the ``bin`` folder and the [binary releases](https://github.com/docd27/rollup-plugin-glsl-optimize/releases/).
 
 [ci]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml/badge.svg
 [ci-url]: https://github.com/docd27/rollup-plugin-glsl-optimize/actions/workflows/node-ci.yml

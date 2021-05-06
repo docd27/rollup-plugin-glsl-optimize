@@ -1,12 +1,15 @@
 import * as util from 'util';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import {settings} from '../../settings.js';
 
 import {installTests} from './install.js';
 import {utilTests} from './util.js';
+import {parserTests} from './parser.js';
+import {preambleTests} from './preamble.js';
 import {glslifyTests} from './glslify.js';
 import {shaderTests} from './shader.js';
-import {settings} from '../../settings.js';
+
 
 /**
  * Log to console without mocking
@@ -24,6 +27,8 @@ export function runTests(glslOptimize) {
 
   installTests();
   utilTests();
+  parserTests();
+  preambleTests();
   shaderTests(glslOptimize);
   glslifyTests(glslOptimize);
 }

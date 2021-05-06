@@ -9,7 +9,7 @@ const GLSL_LINE_EXT = 'GL_GOOGLE_cpp_style_line_directive';
  * @param {string} filePath
  * @param {(version: string) => string} [versionReplacer]
  * @param {string} [extraPreamble]
- * @return {{code: string, didInsertion: boolean, foundVersionString?: string}}
+ * @return {{code: string, didInsertion: boolean}}
  */
 export function insertExtensionPreamble(code, filePath, versionReplacer = (v) => v, extraPreamble) {
   // let extensionDirectiveRequired = true;
@@ -105,18 +105,30 @@ export function fixupDirectives(code, preserve = false, required = true, searchL
  * @internal
  * @param {Iterable<import('./parse.js').ParserToken>} tokens
  * @param {(fixupLineNo: number) => import('./parse.js').ParserToken} preambleToken
+ * PRE: emits trailing \n
  * @param {(version: string) => string} [versionReplacer]
- * @return {{code: string, didInsertion: boolean, foundVersionString?: string}}
+ * If versionReplacer(undefined) !== undefined also inserts a version token when an existing one is not found
+ * @return {{code: string, didInsertion: boolean}}
  */
 function insertPreambleTokens(tokens, preambleToken, versionReplacer = (v) => v) {
-  const versionToken = function* (token) {
-    yield {type: TOK.Version, Version: versionReplacer(undefined), col: token.col, line: token.line,
-      text: `#version ${versionReplacer(undefined)}`, value: ''};
-    yield {type: TOK.EOL, col: token.col, line: token.line, text: '\n', value: '\n'};
+  /** @param {import('./parse.js').ParserToken} token */
+  const newVersionToken = function* (token) {
+    const newVersion = versionReplacer(undefined);
+    if (newVersion !== undefined) {
+      yield {type: TOK.Version, Version: newVersion, col: token.col, line: token.line,
+        text: `#version ${newVersion}`, value: ''};
+      yield {type: TOK.EOL, col: token.col, line: token.line, text: '\n', value: '\n'};
+    }
   };
 
   return {code: [...(/** @return {Generator<import('./parse.js').ParserToken>} */ function* () {
     let insertNext = false, acceptVersion = true, foundVersion = false, didInsertion = false;
+    /** @param {import('./parse.js').ParserToken} token */
+    const newVersionPreambleTokens = function* (token) {
+      acceptVersion = false; didInsertion = true;
+      yield* newVersionToken(token);
+      yield preambleToken(token.line);
+    };
     for (const token of tokens) {
       if (insertNext) {
         insertNext = false;
@@ -125,19 +137,24 @@ function insertPreambleTokens(tokens, preambleToken, versionReplacer = (v) => v)
       switch (token.type) {
         case TOK.Comment: break;
         case TOK.EOF:
-          if (!didInsertion) {
-            didInsertion = true;
-            // Needs a new line
-            if (acceptVersion) yield* versionToken(token);
-            yield {type: TOK.EOL, col: token.col, line: token.line, text: '\n', value: '\n'};
-            yield preambleToken(token.line + 1);
+          if (acceptVersion) { // Zero-length input
+            yield* newVersionPreambleTokens(token);
+          } else {
+            if (!didInsertion) { // EOF directly after version directive
+              didInsertion = true;
+              // Needs a new line
+              yield {type: TOK.EOL, col: token.col, line: token.line, text: '\n', value: '\n'};
+              yield preambleToken(token.line + 1);
+            }
           }
           break;
         case TOK.EOL:
-          if (acceptVersion) yield* versionToken(token);
-          acceptVersion = false;
-          if (!didInsertion) {
-            didInsertion = true; insertNext = true;
+          if (acceptVersion) { // Zero-length first line
+            yield* newVersionPreambleTokens(token);
+          } else {
+            if (!didInsertion) { // Newline after version directive, insert after this EOL
+              insertNext = true; didInsertion = true;
+            }
           }
           break;
         case TOK.Version:
@@ -145,14 +162,22 @@ function insertPreambleTokens(tokens, preambleToken, versionReplacer = (v) => v)
             acceptVersion = false; foundVersion = true;
             const newVersion = versionReplacer(token.Version);
             token.Version = newVersion;
+            /*
+            Even though the parser may parse a line like "#version{COMMENT}300"
+            The following is legal because per the spec:
+            The #version directive must be present in the first line of a shader
+            and must be followed by a newline. It may contain optional white-space as specified below
+            but no other characters are allowed.
+            */
             token.text = `#version ${newVersion}`;
           } else {
             throw new Error(formatParseError(`Parse error: #version directive must be on first line`, token));
           }
           break;
         default:
-          if (acceptVersion) yield* versionToken(token);
-          acceptVersion = false;
+          if (acceptVersion) { // Some other token on first line
+            yield* newVersionPreambleTokens(token);
+          }
       }
       yield token;
     }
@@ -172,3 +197,7 @@ export function insertPreamble(code, preamble) {
       (fixupLineNo) => ({col: 0, line: fixupLineNo, type: TOK.Comment, value: '', text:
       `${preamble}\n`}));
 }
+
+export const test = {
+  insertPreambleTokens,
+};
