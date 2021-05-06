@@ -24,12 +24,22 @@ jobs:
       run: npm install
     - name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
       run: npm run coverage --if-present
-    - name: Coveralls Parallel
-      uses: coverallsapp/github-action@master
+    # - name: Coveralls Parallel
+    #   uses: coverallsapp/github-action@master
+    #   with:
+    #     github-token: ${{ secrets.github_token }}
+    #     flag-name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
+    #     parallel: true
+    - name: Codecov
+      uses: codecov/codecov-action@v1
       with:
-        github-token: ${{ secrets.github_token }}
-        flag-name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
-        parallel: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./lcov.info
+        directory: ./coverage/
+        name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
+        fail_ci_if_error: true
+        path_to_write_report: ./coverage/codecov_report.txt
+        verbose: true
     - name: Build bundle ${{ matrix.os }} node ${{ matrix.node-version }}
       run: npm run build --if-present
     - name: Test bundle ${{ matrix.os }} node ${{ matrix.node-version }}
@@ -38,8 +48,8 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
-        parallel-finished: true
+    # - name: Coveralls Finished
+    #   uses: coverallsapp/github-action@master
+    #   with:
+    #     github-token: ${{ secrets.github_token }}
+    #     parallel-finished: true
