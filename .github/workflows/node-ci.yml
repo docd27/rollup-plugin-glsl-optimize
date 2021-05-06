@@ -44,12 +44,12 @@ jobs:
       run: npm run build --if-present
     - name: Test bundle ${{ matrix.os }} node ${{ matrix.node-version }}
       run: npm test
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-    # - name: Coveralls Finished
-    #   uses: coverallsapp/github-action@master
-    #   with:
-    #     github-token: ${{ secrets.github_token }}
-    #     parallel-finished: true
+  # finish:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Coveralls Finished
+  #     uses: coverallsapp/github-action@master
+  #     with:
+  #       github-token: ${{ secrets.github_token }}
+  #       parallel-finished: true
