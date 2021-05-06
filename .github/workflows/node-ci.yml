@@ -34,7 +34,7 @@ jobs:
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./lcov.info
+        files: ./coverage/lcov.info
         directory: ./coverage/
         name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
         fail_ci_if_error: true
