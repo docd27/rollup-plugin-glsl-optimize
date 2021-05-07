@@ -27,6 +27,22 @@ export function parserTests() {
         ];
         assert.deepStrictEqual(lexerTest(input), expected);
       });
+      it('should lex single char input', function() {
+        const input = `A`;
+        const expected = [
+          `<Line L1:1> v:'A' t:'A'`,
+          `<EOF L1:1> v:'' t:''`,
+        ];
+        assert.deepStrictEqual(lexerTest(input), expected);
+      });
+      it('should lex single newline input', function() {
+        const input = `\n`;
+        const expected = [
+          `<EOL L1:1> v:'<EOL>' t:'<EOL>'`,
+          `<EOF L2:0> v:'' t:''`,
+        ];
+        assert.deepStrictEqual(lexerTest(input), expected);
+      });
       it('should lex input without terminating newline', function() {
         const input = `A`;
         const expected = [
