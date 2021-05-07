@@ -1,4 +1,3 @@
-
 /**
  * @internal
  * Very basic GLSL parsing handling #version and #extension preprocessor directives
@@ -6,25 +5,6 @@
  */
 export function* simpleParse(input) {
   yield* parser(lexer(input));
-}
-
-/**
- * @internal
- * @param {string} input
- * @return {Generator<[string,string],void,void>}
- */
-function* iterateStringLookahead(input) {
-  const inputGenerator = input[Symbol.iterator]();
-  let cur = inputGenerator.next();
-  let next = inputGenerator.next();
-  while (!cur.done && !next.done) {
-    yield [cur.value, next.value];
-    cur = next;
-    next = inputGenerator.next();
-  }
-  if (!cur.done) {
-    yield [cur.value, undefined];
-  }
 }
 
 /**
@@ -107,7 +87,13 @@ function* lexer(input) {
     line++; col = 0;
   };
 
-  for (const [cur, next] of iterateStringLookahead(input)) {
+  let next = input[0];
+  let cur;
+  /* Even though GLSL uses UTF-8 encoding, the actual syntactic charset is ASCII
+     So we can use JS indexed iteration (UTF-16) for a speedup compared to full Unicode iteration (for of) */
+  for (let i = 1; i <= input.length; i++) {
+    cur = next;
+    next = i < input.length ? input[i] : undefined;
     col++;
     if (skipOne) {
       skipOne = false;
@@ -325,7 +311,6 @@ const printToken = (t) => {
 };
 
 export const test = {
-  iterateStringLookahead,
   lexer,
   parser,
   printToken,

@@ -18,13 +18,6 @@ function unMockConsoleError() {
 
 export function parserTests() {
   describe('Parser', function() {
-    describe('#iterateStringLookahead()', function() {
-      it('should correctly yield lookahead for a string', function() {
-        const input = 'test';
-        const result = [...parse.test.iterateStringLookahead(input)];
-        assert.deepStrictEqual(result, [['t', 'e'], ['e', 's'], ['s', 't'], ['t', undefined]]);
-      });
-    });
     describe('#lexer()', function() {
       const lexerTest = (input) => [...parse.test.lexer(input)].map(parse.test.printToken);
       it('should lex empty input', function() {
