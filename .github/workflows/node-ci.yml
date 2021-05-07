@@ -39,7 +39,7 @@ jobs:
         name: Test ${{ matrix.os }} node ${{ matrix.node-version }}
         fail_ci_if_error: true
         path_to_write_report: ./coverage/codecov_report.txt
-        verbose: true
+        # verbose: true
     - name: Build bundle ${{ matrix.os }} node ${{ matrix.node-version }}
       run: npm run build --if-present
     - name: Test bundle ${{ matrix.os }} node ${{ matrix.node-version }}
