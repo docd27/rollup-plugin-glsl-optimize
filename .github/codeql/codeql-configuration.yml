@@ -1,4 +1,7 @@
 name : CodeQL Configuration
 
 paths:
-  - './src'
+  - src
+
+queries:
+  - uses: security-and-quality
