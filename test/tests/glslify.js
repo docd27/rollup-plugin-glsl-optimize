@@ -1,7 +1,23 @@
 import {npmCommand} from '../../src/lib/tools.js';
+import {glslifyInit, glslifyProcessSource} from '../../src/lib/glslify.js';
 import {rollup} from 'rollup';
 import {assert} from 'chai';
 import * as fsSync from 'fs';
+
+const consoleOrig = global.console;
+let outBuf;
+function mockConsoleError() {
+  outBuf = '';
+  global.console = {...consoleOrig};
+  global.console.error = (...args) => {
+    outBuf += `${args.map(String).join(' ')}\n`;
+  };
+  global.console.warn = global.console.error;
+}
+function unMockConsoleError() {
+  global.console = consoleOrig;
+  return outBuf;
+}
 
 async function glslifyUninstall() {
   await npmCommand(['uninstall', 'glslify', 'glsl-noise']);
@@ -12,7 +28,6 @@ async function glslifyInstall() {
   await npmCommand(['install', '--no-save', 'glslify', 'glsl-noise']);
   assert.isTrue(fsSync.existsSync('node_modules/glslify'), 'glslify failed to install');
 }
-
 
 /**
  * @param {typeof import('../../src/index.js').default} glslOptimize
@@ -33,6 +48,14 @@ export function glslifyTests(glslOptimize) {
     this.timeout(30000);
     before('install glslify', glslifyInstall);
     after('uninstall glslify', glslifyUninstall);
+    it('should warn about glslify failing to find includes', async function() {
+      await glslifyInit();
+      mockConsoleError();
+      await glslifyProcessSource('does/not/exist/', '', {basedir: '/does/not/exist'}, (message) => {
+        throw new Error(message);
+      });
+      assert.include(unMockConsoleError(), 'glslify may fail to find includes');
+    });
     it('should pass with glslify enabled but unused', async function() {
       const bundle = await rollup({
         input: 'test/fixtures/basic.js',

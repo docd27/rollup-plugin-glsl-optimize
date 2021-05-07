@@ -7,6 +7,7 @@ import {installTests} from './install.js';
 import {utilTests} from './util.js';
 import {parserTests} from './parser.js';
 import {preambleTests} from './preamble.js';
+import {minifyTests} from './minify.js';
 import {glslifyTests} from './glslify.js';
 import {shaderTests} from './shader.js';
 
@@ -29,6 +30,7 @@ export function runTests(glslOptimize) {
   utilTests();
   parserTests();
   preambleTests();
+  minifyTests();
   shaderTests(glslOptimize);
   glslifyTests(glslOptimize);
 }
