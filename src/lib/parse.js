@@ -87,89 +87,91 @@ function* lexer(input) {
     line++; col = 0;
   };
 
-  let next = input[0];
-  let cur;
-  /* Even though GLSL uses UTF-8 encoding, the actual syntactic charset is ASCII
-     So we can use JS indexed iteration (UTF-16) for a speedup compared to full Unicode iteration (for of) */
-  for (let i = 1; i <= input.length; i++) {
-    cur = next;
-    next = i < input.length ? input[i] : undefined;
-    col++;
-    if (skipOne) {
-      skipOne = false;
-      continue;
-    }
-    /** Current char */
-    curText = cur;
-    switch (cur) {
-      case '\\':
-        switch (next) {
-          case '\r': case '\n':
-            setTokenIf(TOK.Line);
-            appendToken();
-            afterLineContinuation = true;
-            break;
-          default:
-            setTokenIf(TOK.Line);
-            appendTokenValue();
-        }
-        break;
-      case '\r':
-        if (next === '\n') {
-          curText += next; skipOne = true;
-        }
-        yield* handleEOL();
-        break;
-      case '\n':
-        if (next === '\r') {
-          curText += next; skipOne = true;
-        }
-        yield* handleEOL();
-        break;
-      default:
-        if (inCommentSingleLine) {
-          appendTokenValue();
-        } else if (inCommentMultiLine) {
-          if (cur === '*' && next === '/') {
-            curText += next; skipOne = true;
-            appendToken();
-            yield* emitToken();
-            inCommentMultiLine = false;
-          } else {
-            appendTokenValue();
-          }
-        } else {
-          switch (cur) {
-            case '/':
-              switch (next) {
-                case '/':
-                  curText += next; skipOne = true;
-                  yield* emitTokenIf();
-                  setToken(TOK.Comment);
-                  appendToken();
-                  inCommentSingleLine = true;
-                  break;
-                case '*':
-                  curText += next; skipOne = true;
-                  yield* emitTokenIf();
-                  setToken(TOK.Comment);
-                  appendToken();
-                  inCommentMultiLine = true;
-                  break;
-                default:
-                  setTokenIf(TOK.Line);
-                  appendTokenValue();
-              }
+  if (input.length > 0) {
+    let next = input[0];
+    let cur;
+    /* Even though GLSL uses UTF-8 encoding, the actual syntactic charset is ASCII
+      So we can use JS indexed iteration (UTF-16) for a speedup compared to full Unicode iteration (for of) */
+    for (let i = 1; i <= input.length; i++) {
+      cur = next;
+      next = i < input.length ? input[i] : undefined;
+      col++;
+      if (skipOne) {
+        skipOne = false;
+        continue;
+      }
+      /** Current char */
+      curText = cur;
+      switch (cur) {
+        case '\\':
+          switch (next) {
+            case '\r': case '\n':
+              setTokenIf(TOK.Line);
+              appendToken();
+              afterLineContinuation = true;
               break;
             default:
               setTokenIf(TOK.Line);
               appendTokenValue();
           }
-        }
+          break;
+        case '\r':
+          if (next === '\n') {
+            curText += next; skipOne = true;
+          }
+          yield* handleEOL();
+          break;
+        case '\n':
+          if (next === '\r') {
+            curText += next; skipOne = true;
+          }
+          yield* handleEOL();
+          break;
+        default:
+          if (inCommentSingleLine) {
+            appendTokenValue();
+          } else if (inCommentMultiLine) {
+            if (cur === '*' && next === '/') {
+              curText += next; skipOne = true;
+              appendToken();
+              yield* emitToken();
+              inCommentMultiLine = false;
+            } else {
+              appendTokenValue();
+            }
+          } else {
+            switch (cur) {
+              case '/':
+                switch (next) {
+                  case '/':
+                    curText += next; skipOne = true;
+                    yield* emitTokenIf();
+                    setToken(TOK.Comment);
+                    appendToken();
+                    inCommentSingleLine = true;
+                    break;
+                  case '*':
+                    curText += next; skipOne = true;
+                    yield* emitTokenIf();
+                    setToken(TOK.Comment);
+                    appendToken();
+                    inCommentMultiLine = true;
+                    break;
+                  default:
+                    setTokenIf(TOK.Line);
+                    appendTokenValue();
+                }
+                break;
+              default:
+                setTokenIf(TOK.Line);
+                appendTokenValue();
+            }
+          }
 
-    } // End main switch
-  } // End for
-  yield* emitTokenIf();
+      } // End main switch
+    } // End for
+    yield* emitTokenIf();
+  } // End if input
   yield {type: TOK.EOF, text: '', col, line, value: ''};
 }
 
