@@ -5,6 +5,29 @@ coverage:
   precision: 2
   round: down
   range: "70...90"
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 5%
+        paths:
+          - "src"
+        branches:
+          - master
+        if_ci_failed: error #success, failure, error, ignore
+        informational: false
+        only_pulls: false
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+        paths:
+          - "src"
+        branches:
+          - master
+        if_ci_failed: error #success, failure, error, ignore
+        informational: false
+        only_pulls: true
 
 parsers:
   gcov:
