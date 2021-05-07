@@ -9,7 +9,7 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "CodeQL Scanning"
+name: CodeQL
 
 on:
   push:
@@ -22,7 +22,7 @@ on:
 
 jobs:
   CodeQL-Build:
-    name: CodeQL Build
+    name: Scan
     runs-on: ubuntu-latest
 
     strategy:
