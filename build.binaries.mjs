@@ -113,10 +113,12 @@ async function jsonRequest(url) {
  */
 async function fetchMatchingGithubRelease(repo, releaseMatchers) {
   /** @type {Array<object>} */
-  const releaseInfos = await jsonRequest(`https://api.github.com/repos/${repo}/releases`);
+  const releaseInfos = await jsonRequest(`https://api.github.com/repos/${repo}/releases?per_page=100`);
   if (!releaseInfos || !releaseInfos.length) {
     throw new Error(`Invalid release info for ${repo}`);
   }
+  // Sort by created_at (required since glslang's CI replaces assets on the same release ID)
+  releaseInfos.sort(({created_at: a}, {created_at: b}) => a ? b ? (new Date(b) - new Date(a)) : -1 : 1);
   let foundReleaseInfo;
   for (const releaseInfo of releaseInfos) {
     if (releaseInfo.draft || // Skip draft releases
@@ -214,7 +216,7 @@ async function fetchMatchingSpirvToolsCI(urls, releaseMatchers) {
     }
     version = assetVersion;
   }
-  return {version, tag: version, platforms};
+  return {version, tag: version, url: '', platforms};
 }
 
 (async function main() {
@@ -246,6 +248,7 @@ async function fetchMatchingSpirvToolsCI(urls, releaseMatchers) {
     for (const target of buildConfig.targets) {
       if (!sourceResult.platforms[target]) throw new Error(`source '${source.name}' missing target '${target}'`);
     }
+    console.log(`source '${source.name}' - chose '${sourceResult.tag}' (${sourceResult.url})`);
     sources.push({...sourceResult, name: source.name, filelist: source.filelist,
       verargs: source.verargs, vermatch: source.vermatch});
   }
