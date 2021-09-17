@@ -228,6 +228,6 @@ export async function zipAll(archiveFile, workingDir) {
 
 
 /** @internal */
-export const rmDir = (path) => fsSync.existsSync(path) && fsSync.rmdirSync(path, {recursive: true});
+export const rmDir = (path) => fsSync.existsSync(path) && fsSync.rmSync(path, {force: true, recursive: true});
 /** @internal */
 export const rmFile = (path) => fsSync.existsSync(path) && fsSync.rmSync(path, {force: true});
