@@ -64,7 +64,7 @@ Binaries are automatically installed for:
 
 ## Usage
 ```js
-// rollup.config.js
+// rollup.config.mjs
 import {default as glslOptimize} from 'rollup-plugin-glsl-optimize';
 
 export default {
